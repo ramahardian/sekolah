@@ -114,7 +114,7 @@ function parse_lines($text)
     return array_values(array_filter(array_map('trim', $lines)));
 }
 
-$stmtSettings = $pdo->query("SELECT setting_key, setting_value FROM cms_setting WHERE setting_key IN ('header_title', 'header_logo')");
+$stmtSettings = $pdo->query("SELECT setting_key, setting_value FROM cms_setting WHERE setting_key IN ('header_title', 'header_logo', 'header_phone', 'header_email')");
 $headerSettings = [];
 if ($stmtSettings) {
     while ($row = $stmtSettings->fetch(PDO::FETCH_ASSOC)) {
@@ -123,6 +123,8 @@ if ($stmtSettings) {
 }
 $pageTitle = $headerSettings['header_title'] ?? 'SIS Pro';
 $pageLogo = $headerSettings['header_logo'] ?? '';
+$headerPhone = $headerSettings['header_phone'] ?? '+62 812 3456 789';
+$headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
 ?><!DOCTYPE html>
 <html lang="id">
 
@@ -162,8 +164,8 @@ $pageLogo = $headerSettings['header_logo'] ?? '';
     <div class="hidden md:block bg-[#002147] text-white py-2 px-12 text-sm border-b border-white/10">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex gap-6">
-                <span><i class="fas fa-phone mr-2 text-[#ffae01]"></i> +62 812 3456 789</span>
-                <span><i class="fas fa-envelope mr-2 text-[#ffae01]"></i> info@sekolah.sch.id</span>
+                <span><i class="fas fa-phone mr-2 text-[#ffae01]"></i> <?= htmlspecialchars($headerPhone, ENT_QUOTES, 'UTF-8') ?></span>
+                <span><i class="fas fa-envelope mr-2 text-[#ffae01]"></i> <?= htmlspecialchars($headerEmail, ENT_QUOTES, 'UTF-8') ?></span>
             </div>
 
         </div>
