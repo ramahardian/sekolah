@@ -40,7 +40,7 @@ $pageLogo = $headerSettings['header_logo'] ?? '';
         <div class="flex items-center gap-2">
             <?php if (!empty($pageLogo)): ?>
                 <img src="<?= htmlspecialchars($pageLogo, ENT_QUOTES, 'UTF-8') ?>" alt="Logo" class="h-8 max-w-[120px] object-contain">
-            <?php else: ?>
+            <?php elseif (!empty($pageTitle)): ?>
                 <div class="font-bold text-gray-800"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
         </div>

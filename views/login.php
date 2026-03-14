@@ -75,7 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="hidden md:flex md:w-1/2 bg-indigo-600 p-12 flex-col justify-between text-white relative">
                 <div class="z-10">
-                    <h1 class="text-4xl font-bold mb-4">SIS Pro</h1>
+                    <?php if (!empty($pageLogo)): ?>
+                        <img src="<?= htmlspecialchars($pageLogo, ENT_QUOTES, 'UTF-8') ?>" alt="Logo" class="max-h-16 object-contain mb-4">
+                    <?php elseif (!empty($pageTitle)): ?>
+                        <h1 class="text-4xl font-bold mb-4"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1>
+                    <?php endif; ?>
                     <p class="text-indigo-100 italic text-lg">Manajemen sekolah jadi lebih mudah, cepat, dan transparan.
                     </p>
                 </div>

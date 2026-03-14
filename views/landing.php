@@ -174,12 +174,12 @@ $pageLogo = $headerSettings['header_logo'] ?? '';
             <div class="flex items-center gap-2">
                 <?php if (!empty($pageLogo)): ?>
                     <img src="<?= htmlspecialchars($pageLogo, ENT_QUOTES, 'UTF-8') ?>" alt="Logo" class="max-h-10 object-contain">
-                <?php else: ?>
-                    <img src="https://via.placeholder.com/40" alt="Logo" class="w-10">
                 <?php endif; ?>
-                <span class="text-2xl font-black text-[#002147] tracking-tighter">
-                    <?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>
-                </span>
+                <?php if (!empty($pageTitle)): ?>
+                    <span class="text-2xl font-black text-[#002147] tracking-tighter">
+                        <?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+                <?php endif; ?>
             </div>
             <div class="hidden lg:flex gap-8 font-bold text-[#002147] uppercase text-sm">
                 <?php foreach ($navItems as $nav): ?>
@@ -285,14 +285,14 @@ $pageLogo = $headerSettings['header_logo'] ?? '';
                     class="py-20 px-12 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <h2 class="heading-oswald text-4xl font-bold text-[#002147] uppercase mb-6 tracking-tight">
-                            Welcome To <span class="text-[#ffae01]">Our Campus</span>
+                            <?= $sec['title'] ?? 'Welcome To <span class="text-[#ffae01]">Our Campus</span>' ?>
                         </h2>
                         <div class="w-20 h-1 bg-[#ffae01] mb-6"></div>
                         <p class="text-gray-600 leading-relaxed mb-6">
                             <?= htmlspecialchars($sec['body']) ?>
                         </p>
                         <p class="text-gray-500 text-sm italic border-l-2 border-gray-200 pl-4">
-                            "Membangun masa depan generasi bangsa dengan teknologi dan integritas."
+                            <?= htmlspecialchars($sec['subtitle'] ?? '"Membangun masa depan generasi bangsa dengan teknologi dan integritas."', ENT_QUOTES, 'UTF-8') ?>
                         </p>
                     </div>
                     <div class="relative">

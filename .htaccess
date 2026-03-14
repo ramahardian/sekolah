@@ -1,0 +1,30 @@
+# 1. Mencegah akses langsung ke folder sistem
+Options -Indexes
+RewriteEngine On
+
+# 1. Hilangkan .php dari URL secara otomatis
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# 2. Redirect jika user memaksa mengetik .php (Opsional)
+RewriteCond %{REQUEST_METHOD} !^(POST|PUT|PATCH|DELETE)$ [NC]
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+(.+)\.php [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# 3. Redirect otomatis ke folder public (root proyek -> public/)
+RewriteRule ^$ public/ [L,R=301]
+# 2. Melindungi file konfigurasi dan log
+<FilesMatch "^\.|\.(bak|config|sql|log)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 3. Mencegah akses ke folder internal
+RewriteEngine On
+
+# Melarang akses langsung ke folder app, config, dan includes
+RewriteRule ^(app|config|includes|database)/ - [F,L]
+
+# Rapikan URL dashboard jika pakai trailing slash
+RewriteRule ^public/dashboard/$ public/dashboard [R=301,L]

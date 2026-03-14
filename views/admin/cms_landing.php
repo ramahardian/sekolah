@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_header_settings'
         $upsert->execute(['header_title', $headerTitle]);
         $upsert->execute(['header_logo', $headerLogo]);
 
-        set_flash_message('success', 'Pengaturan header berhasil disimpan.');
+        set_flash_message('success', 'Pengaturan berhasil disimpan.');
         header("Location: index.php?page=cms-landing");
         exit;
     } catch (PDOException $e) {
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_header_settings'
             <input type="text" name="header_logo" value="<?= htmlspecialchars($headerLogo, ENT_QUOTES, 'UTF-8') ?>"
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Contoh: /assets/images/logo.png">
         </div>
-        <div class="md:col-span-2 flex justify-end">
+        <div class="md:col-span-2 flex justify-end mt-2">
             <button type="submit"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg transition-all">
                 Simpan Pengaturan

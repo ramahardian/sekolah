@@ -149,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 <?php endif; ?>
 
-<form method="POST" enctype="multipart/form-data" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+<form method="POST" enctype="multipart/form-data"
+    class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="p-8 space-y-6">
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Layout</label>
@@ -182,7 +183,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="block text-sm font-semibold text-gray-700 mb-2">Konten</label>
             <textarea name="body" rows="5"
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"><?= htmlspecialchars((string) $section['body'], ENT_QUOTES, 'UTF-8') ?></textarea>
-            <p class="text-xs text-gray-400 mt-2">Stats/Contact: Label|Value per baris. Hero: baris 1 = deskripsi, baris berikutnya = Judul|Deskripsi|Icon (fa-...).</p>
+            <p class="text-xs text-gray-400 mt-2">Stats/Contact: Label|Value per baris. Hero: baris 1 = deskripsi, baris
+                berikutnya = Judul|Deskripsi|Icon (fa-...).</p>
         </div>
 
         <div id="hero-editor" class="space-y-4 border border-indigo-100 rounded-xl p-4 bg-indigo-50/40">
@@ -206,9 +208,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="hero_desc_item[]" placeholder="Deskripsi kartu"
                         value="<?= htmlspecialchars($card['desc'], ENT_QUOTES, 'UTF-8') ?>"
                         class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition text-sm">
-                    <input type="text" name="hero_icon[]" placeholder="Icon (fa-graduation-cap)"
-                        value="<?= htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8') ?>"
-                        class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition text-sm">
+                    <div class="relative fontawesome-autocomplete-container">
+                        <input type="text" name="hero_icon[]" placeholder="Cari Icon (misal: graduation-cap)"
+                            value="<?= htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8') ?>" autocomplete="off"
+                            class="icon-input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition text-sm">
+
+                        <div
+                            class="autocomplete-dropdown absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden max-h-48 overflow-y-auto">
+                            <!-- Dropdown items will be injected here by JS -->
+                        </div>
+                    </div>
                 </div>
             <?php endfor; ?>
         </div>
@@ -227,8 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Urutan</label>
-                <input type="number" name="sort_order"
-                    value="<?= (int) $section['sort_order'] ?>"
+                <input type="number" name="sort_order" value="<?= (int) $section['sort_order'] ?>"
                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition">
             </div>
         </div>
@@ -290,5 +298,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             layoutSelect.addEventListener('change', toggleHeroEditor);
             toggleHeroEditor();
         }
+
+        // FontAwesome Autocomplete
+        const commonIcons = [
+            'fa-graduation-cap', 'fa-user-tie', 'fa-book-open', 'fa-school',
+            'fa-chalkboard-user', 'fa-users', 'fa-laptop-code', 'fa-building-columns',
+            'fa-bus', 'fa-basketball', 'fa-music', 'fa-palette', 'fa-microscope',
+            'fa-calculator', 'fa-language', 'fa-book', 'fa-award', 'fa-medal',
+            'fa-certificate', 'fa-star', 'fa-heart', 'fa-bell', 'fa-calendar',
+            'fa-clock', 'fa-check', 'fa-info-circle', 'fa-envelope', 'fa-phone',
+            'fa-map-marker-alt', 'fa-globe', 'fa-search', 'fa-cog', 'fa-wrench',
+            'fa-user', 'fa-users-cog', 'fa-id-card', 'fa-file-alt', 'fa-folder-open',
+            'fa-chart-bar', 'fa-chart-pie', 'fa-chart-line', 'fa-image', 'fa-video',
+            'fa-camera', 'fa-paper-plane', 'fa-share-alt', 'fa-download', 'fa-upload',
+            'fa-print', 'fa-home', 'fa-arrow-right', 'fa-arrow-left', 'fa-comment',
+            'fa-comments', 'fa-bullhorn', 'fa-thumbs-up', 'fa-handshake', 'fa-sun',
+            'fa-moon', 'fa-tree', 'fa-leaf', 'fa-fire', 'fa-water'
+        ];
+
+        document.querySelectorAll('.icon-input').forEach(input => {
+            const container = input.closest('.fontawesome-autocomplete-container');
+            const dropdown = container.querySelector('.autocomplete-dropdown');
+
+            input.addEventListener('input', function () {
+                const val = this.value.toLowerCase().replace(/^fa-/, '');
+                dropdown.innerHTML = '';
+
+                if (!val) {
+                    dropdown.classList.add('hidden');
+                    return;
+                }
+
+                const matches = commonIcons.filter(icon => icon.includes(val)).slice(0, 10);
+
+                if (matches.length > 0) {
+                    matches.forEach(icon => {
+                        const div = document.createElement('div');
+                        div.className = 'px-4 py-2 hover:bg-indigo-50 cursor-pointer flex items-center gap-3 text-sm text-gray-700 transition';
+                        div.innerHTML = `<i class="fas ${icon} text-indigo-500 w-5 text-center"></i> <span>${icon}</span>`;
+                        div.addEventListener('click', () => {
+                            input.value = icon;
+                            dropdown.classList.add('hidden');
+                        });
+                        dropdown.appendChild(div);
+                    });
+                    dropdown.classList.remove('hidden');
+                } else {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Sembunyikan dropdown saat klik di luar
+            document.addEventListener('click', function (e) {
+                if (!container.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Munculkan kembali dropdown jika input diklik dan ada isi
+            input.addEventListener('focus', function () {
+                if (this.value) {
+                    // Trigger input event to show matches
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+        });
     })();
 </script>
