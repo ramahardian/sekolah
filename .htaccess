@@ -26,5 +26,5 @@ RewriteEngine On
 # Melarang akses langsung ke folder app, config, dan includes
 RewriteRule ^(app|config|includes|database)/ - [F,L]
 
-# Rapikan URL dashboard jika pakai trailing slash
-RewriteRule ^/$ index.php [R=301,L]
+# Rapikan URL jika pakai trailing slash
+RewriteRule ^public/dashboard/$ index.php [R=301,L]
