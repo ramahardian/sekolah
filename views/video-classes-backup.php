@@ -157,11 +157,17 @@ foreach ($activeRooms as $room) {
                 <?php endif; ?>
             </div>
         </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
+    <?php endforeach; ?>
 </div>
 
-<!-- Success/Error Messages -->
+<?php if (empty($classes)): ?>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+        <i class="fas fa-chalkboard text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-lg font-bold text-gray-700 mb-2">Belum Ada Kelas</h3>
+        <p class="text-gray-500">Anda belum terdaftar dalam kelas manapun.</p>
+    </div>
+<?php endif; ?>
+
 <?php if (isset($_SESSION['success'])): ?>
     <div class="fixed top-4 right-4 z-50">
         <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 p-4 max-w-sm">
