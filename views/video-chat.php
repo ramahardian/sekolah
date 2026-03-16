@@ -536,6 +536,20 @@ body {
 }
 .msg-row.own .msg-time { justify-content: flex-end; }
 
+.msg-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: background 0.15s;
+    opacity: 0.6;
+}
+.msg-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    opacity: 1;
+}
+
 .empty-chat {
     flex: 1;
     display: flex; flex-direction: column;
@@ -900,6 +914,11 @@ body {
                                 <div class="msg-time">
                                     <?= $time ?>
                                     <?php if ($isOwn): ?><i class="fas fa-check" style="font-size:9px;color:#93c5fd;"></i><?php endif; ?>
+                                    <?php if ($isOwn || $userRole === 'admin' || $userRole === 'teacher' || $userRole === 'guru'): ?>
+                                        <button class="msg-delete-btn" onclick="deleteMessage(<?= $msg['id'] ?>)" title="Hapus pesan">
+                                            <i class="fas fa-trash" style="font-size:9px;color:#ef4444;"></i>
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -1173,6 +1192,36 @@ function getLastMsgId() {
     return rows.length > 0 ? rows[rows.length - 1].dataset.messageId : 0;
 }
 
+function deleteMessage(messageId) {
+    if (!confirm('Hapus pesan ini?')) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/delete_message.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message_id: messageId, room_id: ROOM_ID })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            // Remove message from DOM with animation
+            const msgElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (msgElement) {
+                msgElement.style.transition = 'opacity 0.3s, transform 0.3s';
+                msgElement.style.opacity = '0';
+                msgElement.style.transform = 'translateY(10px)';
+                setTimeout(() => msgElement.remove(), 300);
+            }
+            showToast('Pesan berhasil dihapus');
+        } else {
+            showToast(data.error || 'Gagal menghapus pesan', 'error');
+        }
+    } catch (err) {
+        console.warn('Delete message error:', err);
+        showToast('Kesalahan koneksi', 'error');
+    }
+}
+
 async function clearChat() {
     if (!confirm('Bersihkan semua pesan di room ini? Peserta lain juga tidak akan melihat pesan lama.')) return;
     
@@ -1253,6 +1302,9 @@ function appendMessage(msg) {
             <div class="msg-time">
                 ${time}
                 ${isOwn ? '<i class="fas fa-check" style="font-size:9px;color:#93c5fd;"></i>' : ''}
+                <button class="msg-delete-btn" onclick="deleteMessage('${msg.id}')" title="Hapus pesan">
+                    <i class="fas fa-trash" style="font-size:9px;color:#ef4444;"></i>
+                </button>
             </div>
         </div>
     `;
