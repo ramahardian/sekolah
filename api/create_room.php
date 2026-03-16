@@ -60,7 +60,7 @@ if ($existingRoom) {
 }
 
 // Get class info
-$stmt = $pdo->prepare("SELECT class_name FROM classes WHERE id = ?");
+$stmt = $pdo->prepare("SELECT nama_kelas as class_name FROM kelas WHERE id = ?");
 $stmt->execute([$classId]);
 $class = $stmt->fetch(PDO::FETCH_ASSOC);
 

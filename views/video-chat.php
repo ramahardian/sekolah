@@ -33,7 +33,7 @@ if (!$classAccess) {
 }
 
 // Ambil info kelas
-$stmt = $pdo->prepare("SELECT * FROM classes WHERE id = ?");
+$stmt = $pdo->prepare("SELECT id, nama_kelas as class_name FROM kelas WHERE id = ?");
 $stmt->execute([$classId]);
 $class = $stmt->fetch(PDO::FETCH_ASSOC);
 

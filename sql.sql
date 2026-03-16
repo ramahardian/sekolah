@@ -272,6 +272,24 @@ CREATE TABLE absensi (
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Tabel untuk hubungan siswa-kelas (many-to-many)
+CREATE TABLE IF NOT EXISTS `student_classes` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `student_id` int(11) NOT NULL,
+    `class_id` int(11) NOT NULL,
+    `academic_year` varchar(9) DEFAULT NULL,
+    `semester` enum('1','2') DEFAULT '1',
+    `enrollment_date` date DEFAULT NULL,
+    `status` enum('active','completed','transferred') DEFAULT 'active',
+    `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `unique_student_class` (`student_id`, `class_id`, `academic_year`, `semester`),
+    KEY `idx_student_id` (`student_id`),
+    KEY `idx_class_id` (`class_id`),
+    FOREIGN KEY (`student_id`) REFERENCES `siswa`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`class_id`) REFERENCES `kelas`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabel RFID untuk siswa
 CREATE TABLE IF NOT EXISTS `student_rfid` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -343,7 +361,7 @@ CREATE TABLE IF NOT EXISTS `chat_rooms` (
     PRIMARY KEY (`id`),
     KEY `idx_class_id` (`class_id`),
     KEY `idx_room_code` (`room_code`),
-    FOREIGN KEY (`class_id`) REFERENCES `classes`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`class_id`) REFERENCES `kelas`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
  

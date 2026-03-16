@@ -27,17 +27,27 @@ $classes = [];
 if ($debugInfo['database_connected']) {
     try {
         if ($userRole === 'admin' || $userRole === 'teacher') {
-            // Simple query for admin/teacher
-            $stmt = $pdo->query("SELECT id, class_name FROM classes ORDER BY class_name");
+            // Simple query for admin/teacher - use correct table name
+            $stmt = $pdo->query("SELECT id, nama_kelas as class_name FROM kelas ORDER BY nama_kelas");
             $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            // Simple query for students
-            $stmt = $pdo->prepare("SELECT c.id, c.class_name 
+            // Query for students using student_classes table
+            $stmt = $pdo->prepare("SELECT k.id, k.nama_kelas as class_name 
                                   FROM student_classes sc 
-                                  JOIN classes c ON sc.class_id = c.id 
-                                  WHERE sc.student_id = ?");
+                                  JOIN kelas k ON sc.class_id = k.id 
+                                  WHERE sc.student_id = ? AND sc.status = 'active'");
             $stmt->execute([$userId]);
             $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Fallback: if no records in student_classes, try direct siswa.kelas_id
+            if (empty($classes)) {
+                $stmt = $pdo->prepare("SELECT k.id, k.nama_kelas as class_name 
+                                      FROM siswa s 
+                                      JOIN kelas k ON s.kelas_id = k.id 
+                                      WHERE s.user_id = ?");
+                $stmt->execute([$userId]);
+                $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
         }
         $debugInfo['classes_found'] = count($classes);
     } catch (Exception $e) {
@@ -57,6 +67,7 @@ if ($debugInfo['database_connected']) {
         <p>User Role: <?= $debugInfo['user_role'] ?></p>
         <p>Database Connected: <?= $debugInfo['database_connected'] ? 'Yes' : 'No' ?></p>
         <p>Classes Found: <?= $debugInfo['classes_found'] ?></p>
+        <p>Active Rooms: 0 (Simple Mode)</p>
         <?php if ($debugInfo['error']): ?>
             <p class="text-red-600">Error: <?= htmlspecialchars($debugInfo['error']) ?></p>
         <?php endif; ?>
