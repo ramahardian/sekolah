@@ -840,23 +840,23 @@ body {
                     <!-- Camera -->
                     <button id="videoToggleBtn" class="ctrl-btn" onclick="toggleVideo()">
                         <i class="fas fa-video"></i>
-                        <span class="lbl">Video</span>
+                        <span class="lbl">Stop Video</span>
                     </button>
 
                     <!-- Screen share -->
                     <button id="shareBtn" class="ctrl-btn" onclick="shareScreen()">
                         <i class="fas fa-desktop"></i>
-                        <span class="lbl">Share</span>
+                        <span class="lbl">Share Screen</span>
                     </button>
 
-                    <!-- Participants (desktop) -->
-                    <button class="ctrl-btn ctrl-hide-mobile" onclick="toggleParticipants()">
+                    <!-- Participants -->
+                    <button class="ctrl-btn" onclick="toggleParticipants()">
                         <i class="fas fa-users"></i>
                         <span class="lbl">Peserta</span>
                     </button>
 
-                    <!-- Chat (desktop) -->
-                    <button class="ctrl-btn ctrl-hide-mobile" onclick="toggleChat()">
+                    <!-- Chat -->
+                    <button class="ctrl-btn" onclick="toggleChat()" id="chatCtrlBtn">
                         <i class="fas fa-comment-dots"></i>
                         <span class="lbl">Chat</span>
                     </button>
@@ -1075,8 +1075,8 @@ function toggleVideo() {
     $videoBtn.classList.toggle('off', isVideoOff);
     $videoOffCover.style.display = isVideoOff ? 'flex' : 'none';
     $videoBtn.innerHTML = isVideoOff
-        ? '<i class="fas fa-video-slash"></i><span class="lbl">Mulai Video</span>'
-        : '<i class="fas fa-video"></i><span class="lbl">Video</span>';
+        ? '<i class="fas fa-video-slash"></i><span class="lbl">Start Video</span>'
+        : '<i class="fas fa-video"></i><span class="lbl">Stop Video</span>';
 }
 
 async function shareScreen() {
@@ -1090,12 +1090,11 @@ async function shareScreen() {
         }
         const $shareBtn = document.getElementById('shareBtn');
         $shareBtn.classList.add('off');
-        $shareBtn.querySelector('i').className = 'fas fa-stop-circle';
-        $shareBtn.querySelector('.lbl').textContent = 'Stop';
+        $shareBtn.innerHTML = '<i class="fas fa-stop-circle"></i><span class="lbl">Stop Share</span>';
         vt.onended = () => {
             if (localStream) $localVideo.srcObject = localStream;
             $shareBtn.classList.remove('off');
-            $shareBtn.innerHTML = '<i class="fas fa-desktop"></i><span class="lbl">Share</span>';
+            $shareBtn.innerHTML = '<i class="fas fa-desktop"></i><span class="lbl">Share Screen</span>';
         };
     } catch (e) { console.warn('Screen share:', e); }
 }
@@ -1162,7 +1161,7 @@ $chatForm.addEventListener('submit', async e => {
     $messageInput.value = '';
 
     try {
-        const res = await fetch('<?= $baseApiUrl ?? '' ?>/api/send_message.php', {
+        const res = await fetch(`${API_BASE}/api/send_message.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ room_id: ROOM_ID, message: msg, user_id: USER_ID })
@@ -1177,25 +1176,45 @@ function scrollBottom() {
     $messagesArea.scrollTop = $messagesArea.scrollHeight;
 }
 
-async function pollMessages() {
-    try {
-        const lastId = getLastMsgId();
-        const res    = await fetch(`<?= $baseApiUrl ?? '' ?>/api/get_messages.php?room_id=${ROOM_ID}&last_id=${lastId}`);
-        const msgs   = await res.json();
-        if (Array.isArray(msgs) && msgs.length > 0) {
-            // Remove empty state if present
-            const emptyState = $messagesArea.querySelector('.empty-chat');
-            if (emptyState) emptyState.remove();
-
-            msgs.forEach(appendMessage);
-            scrollBottom();
-        }
-    } catch (e) { /* silent */ }
+function getLastMsgId() {
+    // Only get numeric IDs, ignore temp_ IDs
+    const rows = Array.from($messagesArea.querySelectorAll('[data-message-id]'))
+        .filter(row => !row.dataset.messageId.startsWith('temp_'));
+    return rows.length > 0 ? rows[rows.length - 1].dataset.messageId : 0;
 }
 
-function getLastMsgId() {
-    const rows = $messagesArea.querySelectorAll('[data-message-id]');
-    return rows.length > 0 ? rows[rows.length - 1].dataset.messageId : 0;
+function pollMessages() {
+    // Find all temp messages to check against incoming real ones
+    const tempMessages = Array.from($messagesArea.querySelectorAll('[data-message-id^="temp_"]'));
+    
+    fetch(`${API_BASE}/api/get_messages.php?room_id=${ROOM_ID}&last_id=${getLastMsgId()}`)
+        .then(res => res.json())
+        .then(msgs => {
+            if (Array.isArray(msgs) && msgs.length > 0) {
+                const emptyState = $messagesArea.querySelector('.empty-chat');
+                if (emptyState) emptyState.remove();
+
+                msgs.forEach(msg => {
+                    // Prevent duplicate if ID already exists
+                    if (!$messagesArea.querySelector(`[data-message-id="${msg.id}"]`)) {
+                        // Check if this server message matches any of our temp messages (by content)
+                        const matchingTemp = tempMessages.find(t => {
+                            const bubble = t.querySelector('.msg-bubble');
+                            return bubble && bubble.textContent === msg.message && t.classList.contains('own');
+                        });
+                        
+                        if (matchingTemp) {
+                            // If found a match, remove the temp one before adding real one
+                            matchingTemp.remove();
+                        }
+                        
+                        appendMessage(msg);
+                    }
+                });
+                scrollBottom();
+            }
+        })
+        .catch(e => console.warn('Poll error:', e));
 }
 
 function appendMessage(msg) {
