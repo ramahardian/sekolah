@@ -165,7 +165,7 @@ if ($role === 'guru' && isset($pdo)) {
                 SIS
             </div>
             <div>
-                <p class="text-lg font-bold text-gray-800 leading-tight">SIS Pro</p>
+                <p class="text-lg font-bold text-gray-800 leading-tight">SIS Mealify</p>
                 <p class="text-xs text-gray-500">School Management</p>
             </div>
         </div>
