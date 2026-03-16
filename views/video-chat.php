@@ -1012,6 +1012,7 @@ let isSidebarOpen    = false;
 const USER_ID        = <?= (int)$userId ?>;
 const ROOM_ID        = <?= (int)$room['id'] ?>;
 const ROOM_CODE      = '<?= htmlspecialchars($room['room_code'], ENT_QUOTES) ?>';
+const API_BASE       = '<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>';
 
 /* ============================================================
    DOM
@@ -1144,14 +1145,32 @@ $chatForm.addEventListener('submit', async e => {
     e.preventDefault();
     const msg = $messageInput.value.trim();
     if (!msg) return;
+
+    // Optimistically show message immediately
+    const tempMsg = {
+        id: 'temp_' + Date.now(),
+        user_id: USER_ID,
+        message: msg,
+        full_name: null,
+        username: '',
+        created_at: new Date().toISOString()
+    };
+    const emptyState = $messagesArea.querySelector('.empty-chat');
+    if (emptyState) emptyState.remove();
+    appendMessage(tempMsg);
+    scrollBottom();
+    $messageInput.value = '';
+
     try {
-        const res = await fetch('api/send_message.php', {
+        const res = await fetch('<?= $baseApiUrl ?? '' ?>/api/send_message.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ room_id: ROOM_ID, message: msg, user_id: USER_ID })
         });
-        if (res.ok) $messageInput.value = '';
-    } catch (e) { console.warn('Send msg:', e); }
+        if (!res.ok) {
+            console.warn('Send failed:', res.status, await res.text());
+        }
+    } catch (err) { console.warn('Send msg error:', err); }
 });
 
 function scrollBottom() {
@@ -1161,7 +1180,7 @@ function scrollBottom() {
 async function pollMessages() {
     try {
         const lastId = getLastMsgId();
-        const res    = await fetch(`api/get_messages.php?room_id=${ROOM_ID}&last_id=${lastId}`);
+        const res    = await fetch(`<?= $baseApiUrl ?? '' ?>/api/get_messages.php?room_id=${ROOM_ID}&last_id=${lastId}`);
         const msgs   = await res.json();
         if (Array.isArray(msgs) && msgs.length > 0) {
             // Remove empty state if present
