@@ -108,40 +108,7 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Stats Cards -->
-        <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
-            <div class="glass-effect rounded-xl p-4 text-center">
-                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <i class="fas fa-fingerprint text-white"></i>
-                </div>
-                <p class="text-2xl font-bold" id="totalScans">0</p>
-                <p class="text-sm text-gray-300">Total Scan Hari Ini</p>
-            </div>
-            
-            <div class="glass-effect rounded-xl p-4 text-center">
-                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <i class="fas fa-sign-in-alt text-white"></i>
-                </div>
-                <p class="text-2xl font-bold" id="checkIns">0</p>
-                <p class="text-sm text-gray-300">Check In</p>
-            </div>
-            
-            <div class="glass-effect rounded-xl p-4 text-center">
-                <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <i class="fas fa-sign-out-alt text-white"></i>
-                </div>
-                <p class="text-2xl font-bold" id="checkOuts">0</p>
-                <p class="text-sm text-gray-300">Check Out</p>
-            </div>
-            
-            <div class="glass-effect rounded-xl p-4 text-center">
-                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <i class="fas fa-users text-white"></i>
-                </div>
-                <p class="text-2xl font-bold" id="uniqueStudents">0</p>
-                <p class="text-sm text-gray-300">Siswa Unik</p>
-            </div>
-        </section>
+      
 
         <!-- Scan Section -->
         <section class="max-w-2xl mx-auto mb-12">
@@ -201,27 +168,7 @@
                 </div>
             </div>
         </section>
-
-        <!-- Quick Access -->
-        <section class="max-w-4xl mx-auto">
-            <div class="glass-effect rounded-2xl p-6">
-                <h3 class="text-xl font-bold heading-oswald mb-6 text-center">Akses Cepat</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <a href="siswa-portal.php" class="text-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
-                        <i class="fas fa-home text-3xl mb-2"></i>
-                        <p class="font-medium">Portal Siswa</p>
-                    </a>
-                    <a href="index.php?page=login" class="text-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
-                        <i class="fas fa-sign-in-alt text-3xl mb-2"></i>
-                        <p class="font-medium">Login Siswa</p>
-                    </a>
-                    <button onclick="showHelp()" class="text-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
-                        <i class="fas fa-question-circle text-3xl mb-2"></i>
-                        <p class="font-medium">Bantuan</p>
-                    </button>
-                </div>
-            </div>
-        </section>
+ 
     </main>
 
     <!-- Recent Scans Sidebar -->
