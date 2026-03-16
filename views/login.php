@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@500;600;700&display=swap');
         body { font-family: 'Roboto', sans-serif; }
         .font-oswald { font-family: 'Oswald', sans-serif; }
-        .bg-custom-blue { background-color: #3b71fe; }
+        .bg-custom-blue { background-color: #002147; }
     </style>
 </head>
 
@@ -80,10 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <div class="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
             <div class="mb-8 flex items-center gap-2">
-                <div class="bg-blue-600 p-2 rounded-lg text-white">
+                <div class="bg-[#002147] p-2 rounded-lg text-white">
                     <i class="fas fa-chart-line fa-lg"></i>
                 </div>
-                <span class="text-2xl font-bold text-slate-800">SiS <span class="text-blue-600 font-oswald font-semibold text-lg italic">mealify</span></span>
+                <span class="text-2xl font-bold text-slate-800">SiS <span class="text-[#002147] font-oswald font-semibold text-lg italic">mealify</span></span>
             </div>
 
             
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div>
                     <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Nama Pengguna</label>
                     <input type="text" name="username" required 
-                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-300"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#002147] outline-none transition-all placeholder:text-gray-300"
                         placeholder="Masukkan nama pengguna">
                 </div>
 
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Kata Sandi</label>
                     <div class="relative">
                         <input type="password" name="password" required id="passwordInput"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-300"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#002147] outline-none transition-all placeholder:text-gray-300"
                             placeholder="••••••••">
                         <button type="button" class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600" onclick="togglePassword()">
                             <i class="far fa-eye-slash" id="eyeIcon"></i>
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]">
+                    class="w-full bg-[#002147] hover:bg-[#001a35] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-[#002147]/20 transition-all active:scale-[0.98]">
                     Masuk
                 </button>
             </form>
