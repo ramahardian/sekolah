@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="bg-blue-600 p-2 rounded-lg text-white">
                     <i class="fas fa-chart-line fa-lg"></i>
                 </div>
-                <span class="text-2xl font-bold text-slate-800">Filuick <span class="text-blue-600 font-medium text-lg italic">Pay</span></span>
+                <span class="text-2xl font-bold text-slate-800">SiS <span class="text-blue-600 font-medium text-lg italic">mealify</span></span>
             </div>
 
             <div class="mb-8 text-center">
@@ -118,33 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-sm">
-                    <label class="flex items-center text-gray-600 cursor-pointer">
-                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 mr-2">
-                        Remember for 30 Days
-                    </label>
-                    <a href="#" class="text-blue-600 font-semibold hover:underline">Forgot password</a>
-                </div>
-
                 <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]">
                     Sign in
                 </button>
             </form>
 
-            <div class="relative my-8">
-                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
-                <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-4 text-gray-400">OR</span></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <button class="flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5" alt=""> Google
-                </button>
-                <button class="flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
-                    <i class="fab fa-facebook text-blue-600 text-xl"></i> Facebook
-                </button>
-            </div>
+            
 
             <p class="mt-8 text-center text-gray-500 text-sm">
                 Don't have an account? <a href="#" class="text-blue-600 font-bold hover:underline">Sign up</a>
