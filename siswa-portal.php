@@ -105,7 +105,7 @@ $schoolPhone = $settings['school_phone'] ?? '021-123456';
     <!-- Quick Actions -->
     <section class="py-16">
         <div class="container mx-auto px-4">
-            <h3 class="text-2xl font-bold text-center text-[#002147] mb-12 heading-oswald">Layanan Digital</h3>
+ 
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Absensi Card -->
