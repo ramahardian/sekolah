@@ -468,34 +468,7 @@ $headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
                             <?php endforeach; ?>
                         </div>
 
-                        <div class="bg-white p-8 rounded-lg shadow-md">
-                            <h3 class="heading-oswald text-2xl font-bold text-[#002147] mb-6 text-center">
-                                Kirim Pesan
-                            </h3>
-                            <form class="max-w-2xl mx-auto">
-                                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="Masukkan nama Anda">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                        <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="email@example.com">
-                                    </div>
-                                </div>
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Subjek</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="Subjek pesan">
-                                </div>
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pesan</label>
-                                    <textarea rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="Tulis pesan Anda di sini..."></textarea>
-                                </div>
-                                <button type="submit" class="w-full bg-[#002147] hover:bg-[#ffae01] text-white font-bold py-4 rounded-lg transition-colors duration-300">
-                                    Kirim Pesan
-                                </button>
-                            </form>
-                        </div>
+                     
                     </div>
                 </section>
 
