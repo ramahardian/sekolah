@@ -66,6 +66,11 @@ if ($role === 'admin') {
 } elseif ($role === 'guru') {
     $menuItems = array_merge($menuItems, [
         [
+            'label' => 'Video Chat',
+            'page' => ['video-classes', 'video-chat'],
+            'icon' => 'fa-video'
+        ],
+        [
             'label' => 'Absensi',
             'page' => ['absensi'],
             'icon' => 'fa-calendar-check'
@@ -90,6 +95,11 @@ if ($role === 'admin') {
     ]);
 } elseif ($role === 'siswa') {
     $menuItems = array_merge($menuItems, [
+        [
+            'label' => 'Video Chat',
+            'page' => ['video-classes', 'video-chat'],
+            'icon' => 'fa-video'
+        ],
         [
             'label' => 'Profil',
             'page' => ['profil-siswa'],

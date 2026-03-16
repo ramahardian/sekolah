@@ -285,6 +285,16 @@ include __DIR__ . '/../views/layouts/header.php';
             }
             break;
 
+        // --- MODULE VIDEO CHAT ---
+        case 'video-classes':
+            cekLogin();
+            include __DIR__ . '/../views/video-classes.php';
+            break;
+        case 'video-chat':
+            cekLogin();
+            include __DIR__ . '/../views/video-chat.php';
+            break;
+
         // --- HALAMAN 404 ---
         default:
             echo "
