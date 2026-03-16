@@ -148,6 +148,12 @@ if ($debugInfo['database_connected']) {
 <script>
 async function createRoom(classId) {
     try {
+        // Show loading state
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Membuat...';
+        button.disabled = true;
+        
         const response = await fetch('api/create_room.php', {
             method: 'POST',
             headers: {
@@ -160,15 +166,71 @@ async function createRoom(classId) {
         
         const result = await response.json();
         
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+        
         if (result.success) {
-            alert('Room berhasil dibuat!');
-            window.location.href = `index.php?page=video-chat&class_id=${classId}&room_id=${result.room_id}`;
+            showNotification('success', 'Berhasil!', 'Room chat berhasil dibuat');
+            setTimeout(() => {
+                window.location.href = `index.php?page=video-chat&class_id=${classId}&room_id=${result.room_id}`;
+            }, 1500);
         } else {
-            alert('Gagal membuat room: ' + (result.message || 'Terjadi kesalahan'));
+            showNotification('error', 'Gagal', result.error || 'Terjadi kesalahan');
+            console.error('Create room error:', result);
         }
     } catch (error) {
         console.error('Error creating room:', error);
-        alert('Terjadi kesalahan koneksi');
+        showNotification('error', 'Gagal', 'Terjadi kesalahan koneksi');
+        
+        // Restore button
+        const button = event.target;
+        button.innerHTML = '<i class="fas fa-plus mr-2"></i>Buat Room';
+        button.disabled = false;
     }
+}
+
+function showNotification(type, title, message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 transform transition-all duration-300`;
+    
+    if (type === 'success') {
+        notification.innerHTML = `
+            <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 p-4 max-w-sm">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="font-bold">${title}</p>
+                        <p class="text-sm text-gray-600">${message}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        notification.innerHTML = `
+            <div class="bg-white rounded-lg shadow-lg border-l-4 border-red-500 p-4 max-w-sm">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="font-bold">${title}</p>
+                        <p class="text-sm text-gray-600">${message}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
 }
 </script>
