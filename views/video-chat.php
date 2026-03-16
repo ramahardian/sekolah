@@ -174,6 +174,7 @@ try {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; }
@@ -1340,8 +1341,19 @@ async function shareScreen() {
     } catch (e) { console.warn('Screen share:', e); }
 }
 
-function endCall() {
-    if (!confirm('Yakin ingin meninggalkan meeting?')) return;
+async function endCall() {
+    const result = await Swal.fire({
+        title: 'Keluar dari Meeting?',
+        text: 'Anda akan meninggalkan sesi video chat ini.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, keluar',
+        cancelButtonText: 'Batal'
+    });
+    
+    if (!result.isConfirmed) return;
     
     // Stop signaling
     if (signalingInterval) {
@@ -1439,7 +1451,18 @@ function getLastMsgId() {
 }
 
 async function deleteMessage(messageId) {
-    if (!confirm('Hapus pesan ini?')) return;
+    const result = await Swal.fire({
+        title: 'Hapus Pesan?',
+        text: 'Pesan ini akan dihapus secara permanen.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    });
+    
+    if (!result.isConfirmed) return;
     
     try {
         const res = await fetch(`${API_BASE}/api/delete_message.php`, {
@@ -1458,18 +1481,44 @@ async function deleteMessage(messageId) {
                 msgElement.style.transform = 'translateY(10px)';
                 setTimeout(() => msgElement.remove(), 300);
             }
-            showToast('Pesan berhasil dihapus');
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Pesan berhasil dihapus',
+                timer: 2000,
+                showConfirmButton: false
+            });
         } else {
-            showToast(data.error || 'Gagal menghapus pesan', 'error');
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: data.error || 'Gagal menghapus pesan'
+            });
         }
     } catch (err) {
         console.warn('Delete message error:', err);
-        showToast('Kesalahan koneksi', 'error');
+        Swal.fire({
+            icon: 'error',
+            title: 'Kesalahan!',
+            text: 'Kesalahan koneksi'
+        });
     }
 }
 
 async function clearChat() {
-    if (!confirm('Bersihkan semua pesan di room ini? Peserta lain juga tidak akan melihat pesan lama.')) return;
+    const result = await Swal.fire({
+        title: 'Bersihkan Semua Chat?',
+        text: 'Semua pesan di room ini akan dihapus. Peserta lain juga tidak akan melihat pesan lama.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, bersihkan!',
+        cancelButtonText: 'Batal'
+    });
+    
+    if (!result.isConfirmed) return;
     
     try {
         const res = await fetch(`${API_BASE}/api/clear_chat.php`, {
@@ -1486,13 +1535,28 @@ async function clearChat() {
                     <p>Chat telah dibersihkan.</p>
                 </div>
             `;
-            showToast('Chat berhasil dibersihkan');
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Chat berhasil dibersihkan',
+                timer: 2000,
+                showConfirmButton: false
+            });
         } else {
-            showToast(data.error || 'Gagal menghapus chat', 'error');
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: data.error || 'Gagal menghapus chat'
+            });
         }
     } catch (err) {
         console.warn('Clear chat error:', err);
-        showToast('Kesalahan koneksi', 'error');
+        Swal.fire({
+            icon: 'error',
+            title: 'Kesalahan!',
+            text: 'Kesalahan koneksi'
+        });
     }
 }
 
