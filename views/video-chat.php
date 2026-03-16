@@ -859,9 +859,17 @@ body {
                     <i class="fas fa-comments" style="color:#3b82f6;"></i>
                     Chat
                 </h3>
-                <button class="panel-close-btn" onclick="toggleChat()">
-                    <i class="fas fa-times" style="font-size:13px;"></i>
-                </button>
+                <div class="flex items-center gap-1">
+                    <?php if ($userRole === 'teacher' || $userRole === 'admin' || $userRole === 'guru'): ?>
+                        <button class="hbtn" onclick="clearChat()" title="Hapus Semua Chat" style="padding:4px 8px;font-size:11px;color:#ef4444;">
+                            <i class="fas fa-trash-alt"></i>
+                            <span class="hidden xs:inline ml-1">Hapus</span>
+                        </button>
+                    <?php endif; ?>
+                    <button class="panel-close-btn" onclick="toggleChat()">
+                        <i class="fas fa-times" style="font-size:13px;"></i>
+                    </button>
+                </div>
             </div>
 
             <div id="messagesArea" class="messages-area scroll scroll-light">
@@ -1163,6 +1171,34 @@ function getLastMsgId() {
     const rows = Array.from($messagesArea.querySelectorAll('[data-message-id]'))
         .filter(row => !row.dataset.messageId.startsWith('temp_'));
     return rows.length > 0 ? rows[rows.length - 1].dataset.messageId : 0;
+}
+
+async function clearChat() {
+    if (!confirm('Hapus semua pesan di room ini? Tindakan ini tidak dapat dibatalkan.')) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/clear_chat.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ room_id: ROOM_ID })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            $messagesArea.innerHTML = `
+                <div class="empty-chat">
+                    <i class="fas fa-comment-dots"></i>
+                    <p>Chat telah dibersihkan.</p>
+                </div>
+            `;
+            showToast('Chat berhasil dibersihkan');
+        } else {
+            showToast(data.error || 'Gagal menghapus chat', 'error');
+        }
+    } catch (err) {
+        console.warn('Clear chat error:', err);
+        showToast('Kesalahan koneksi', 'error');
+    }
 }
 
 function pollMessages() {
