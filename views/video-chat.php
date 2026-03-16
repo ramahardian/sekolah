@@ -2,9 +2,22 @@
 require_once __DIR__ . '/../includes/auth_check.php';
 require_once __DIR__ . '/../config/database.php';
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Ambil parameter kelas
 $classId = $_GET['class_id'] ?? null;
 $roomId = $_GET['room_id'] ?? null;
+
+// Debug info
+$debugInfo = [
+    'class_id' => $classId,
+    'room_id' => $roomId,
+    'user_id' => $_SESSION['user_id'] ?? null,
+    'user_role' => $_SESSION['role'] ?? '',
+    'access_granted' => false
+];
 
 if (!$classId) {
     header("Location: index.php?page=dashboard");
@@ -20,12 +33,24 @@ $classAccess = false;
 if ($userRole === 'admin' || $userRole === 'teacher') {
     // Guru dan admin bisa akses semua kelas
     $classAccess = true;
+    $debugInfo['access_reason'] = 'Admin/Teacher access';
 } else {
     // Cek apakah siswa terdaftar di kelas ini
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM student_classes WHERE student_id = ? AND class_id = ?");
     $stmt->execute([$userId, $classId]);
     $classAccess = $stmt->fetchColumn() > 0;
+    $debugInfo['access_reason'] = 'student_classes check';
+    
+    // Fallback: check siswa.kelas_id if no student_classes record
+    if (!$classAccess) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM siswa WHERE user_id = ? AND kelas_id = ?");
+        $stmt->execute([$userId, $classId]);
+        $classAccess = $stmt->fetchColumn() > 0;
+        $debugInfo['access_reason'] = 'siswa.kelas_id fallback';
+    }
 }
+
+$debugInfo['access_granted'] = $classAccess;
 
 if (!$classAccess) {
     header("Location: index.php?page=dashboard");
@@ -37,6 +62,8 @@ $stmt = $pdo->prepare("SELECT id, nama_kelas as class_name FROM kelas WHERE id =
 $stmt->execute([$classId]);
 $class = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$debugInfo['class_found'] = !!$class;
+
 if (!$class) {
     header("Location: index.php?page=dashboard");
     exit;
@@ -47,6 +74,8 @@ $stmt = $pdo->prepare("SELECT * FROM chat_rooms WHERE class_id = ?");
 $stmt->execute([$classId]);
 $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$debugInfo['room_found'] = !!$room;
+
 if (!$room) {
     // Buat room baru jika belum ada
     $roomCode = 'CLASS_' . $classId . '_' . strtoupper(substr(md5(time()), 0, 8));
@@ -56,8 +85,14 @@ if (!$room) {
     $stmt = $pdo->prepare("SELECT * FROM chat_rooms WHERE class_id = ?");
     $stmt->execute([$classId]);
     $room = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $debugInfo['room_created'] = true;
+} else {
+    $debugInfo['room_created'] = false;
 }
 
+$debugInfo['final_room_id'] = $room['id'];
+?>
 // Tambahkan user sebagai participant jika belum ada
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM room_participants WHERE room_id = ? AND user_id = ?");
 $stmt->execute([$room['id'], $userId]);
@@ -94,6 +129,28 @@ $stmt = $pdo->prepare("
 $stmt->execute([$room['id']]);
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+<!-- Debug Info (remove in production) -->
+<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+    <h3 class="text-lg font-bold text-yellow-800 mb-2">Debug Info:</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+        <div><strong>Class ID:</strong> <?= $debugInfo['class_id'] ?></div>
+        <div><strong>Room ID:</strong> <?= $debugInfo['room_id'] ?></div>
+        <div><strong>User ID:</strong> <?= $debugInfo['user_id'] ?></div>
+        <div><strong>User Role:</strong> <?= $debugInfo['user_role'] ?></div>
+        <div><strong>Access Granted:</strong> <?= $debugInfo['access_granted'] ? 'Yes' : 'No' ?></div>
+        <div><strong>Access Reason:</strong> <?= $debugInfo['access_reason'] ?? 'N/A' ?></div>
+        <div><strong>Class Found:</strong> <?= $debugInfo['class_found'] ? 'Yes' : 'No' ?></div>
+        <div><strong>Room Found:</strong> <?= $debugInfo['room_found'] ? 'Yes' : 'No' ?></div>
+        <div><strong>Room Created:</strong> <?= $debugInfo['room_created'] ? 'Yes' : 'No' ?></div>
+        <div><strong>Final Room ID:</strong> <?= $debugInfo['final_room_id'] ?></div>
+    </div>
+    <div class="mt-2">
+        <strong>Class Name:</strong> <?= htmlspecialchars($class['class_name']) ?><br>
+        <strong>Room Code:</strong> <?= htmlspecialchars($room['room_code']) ?><br>
+        <strong>Room Name:</strong> <?= htmlspecialchars($room['room_name']) ?>
+    </div>
+</div>
 
 <!DOCTYPE html>
 <html lang="id">
