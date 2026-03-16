@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row min-h-[700px]">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden max-w-5xl w-full flex flex-col md:flex-row xl:min-h-[700px] min-h-[100px]">
         
         <div class="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
             <div class="mb-8 flex items-center gap-2">
