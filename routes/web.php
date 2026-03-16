@@ -288,7 +288,7 @@ include __DIR__ . '/../views/layouts/header.php';
         // --- MODULE VIDEO CHAT ---
         case 'video-classes':
             cekLogin();
-            include __DIR__ . '/../views/video-classes.php';
+            include __DIR__ . '/../views/video-classes-simple.php';
             break;
         case 'video-chat':
             cekLogin();

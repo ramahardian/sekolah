@@ -7,56 +7,63 @@ $userRole = $_SESSION['role'] ?? '';
 
 // Get user's classes
 $classes = [];
-if ($userRole === 'admin' || $userRole === 'teacher') {
-    // Admin and teacher can see all classes
-    $stmt = $pdo->prepare("SELECT c.*, COUNT(sc.id) as student_count 
-                          FROM classes c 
-                          LEFT JOIN student_classes sc ON c.id = sc.class_id 
-                          GROUP BY c.id 
-                          ORDER BY c.class_name");
-    $stmt->execute();
-    $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} else {
-    // Students can only see their own classes
-    $stmt = $pdo->prepare("SELECT c.*, COUNT(sc2.id) as student_count 
-                          FROM student_classes sc 
-                          JOIN classes c ON sc.class_id = c.id 
-                          LEFT JOIN student_classes sc2 ON c.id = sc2.class_id 
-                          WHERE sc.student_id = ? 
-                          GROUP BY c.id 
-                          ORDER BY c.class_name");
-    $stmt->execute([$userId]);
-    $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+try {
+    if ($userRole === 'admin' || $userRole === 'teacher') {
+        // Admin and teacher can see all classes
+        $stmt = $pdo->prepare("SELECT c.*, COUNT(sc.id) as student_count 
+                              FROM classes c 
+                              LEFT JOIN student_classes sc ON c.id = sc.class_id 
+                              GROUP BY c.id 
+                              ORDER BY c.class_name");
+        $stmt->execute();
+        $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // Students can only see their own classes
+        $stmt = $pdo->prepare("SELECT c.*, COUNT(sc2.id) as student_count 
+                              FROM student_classes sc 
+                              JOIN classes c ON sc.class_id = c.id 
+                              LEFT JOIN student_classes sc2 ON c.id = sc2.class_id 
+                              WHERE sc.student_id = ? 
+                              GROUP BY c.id 
+                              ORDER BY c.class_name");
+        $stmt->execute([$userId]);
+        $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-// Get active chat rooms for these classes
-$classIds = array_column($classes, 'id');
-$activeRooms = [];
-if (!empty($classIds)) {
-    $placeholders = str_repeat('?,', count($classIds) - 1) . '?';
-    $stmt = $pdo->prepare("
-        SELECT cr.*, c.class_name,
-               COUNT(rp.id) as active_participants,
-               MAX(cm.created_at) as last_activity
-        FROM chat_rooms cr 
-        JOIN classes c ON cr.class_id = c.id 
-        LEFT JOIN room_participants rp ON cr.id = rp.room_id AND rp.is_online = 1
-        LEFT JOIN chat_messages cm ON cr.id = cm.room_id
-        WHERE cr.class_id IN ($placeholders)
-        GROUP BY cr.id
-        ORDER BY last_activity DESC
-    ");
-    $stmt->execute($classIds);
-    $activeRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} else {
-    // Debug: Show if no classes found
-    error_log("No classes found for user: $userId, role: $userRole");
-}
+    // Get active chat rooms for these classes
+    $classIds = array_column($classes, 'id');
+    $activeRooms = [];
+    if (!empty($classIds)) {
+        $placeholders = str_repeat('?,', count($classIds) - 1) . '?';
+        $stmt = $pdo->prepare("
+            SELECT cr.*, c.class_name,
+                   COUNT(rp.id) as active_participants,
+                   MAX(cm.created_at) as last_activity
+            FROM chat_rooms cr 
+            JOIN classes c ON cr.class_id = c.id 
+            LEFT JOIN room_participants rp ON cr.id = rp.room_id AND rp.is_online = 1
+            LEFT JOIN chat_messages cm ON cr.id = cm.room_id
+            WHERE cr.class_id IN ($placeholders)
+            GROUP BY cr.id
+            ORDER BY last_activity DESC
+        ");
+        $stmt->execute($classIds);
+        $activeRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // Debug: Show if no classes found
+        error_log("No classes found for user: $userId, role: $userRole");
+    }
 
-// Group rooms by class
-$roomsByClass = [];
-foreach ($activeRooms as $room) {
-    $roomsByClass[$room['class_id']] = $room;
+    // Group rooms by class
+    $roomsByClass = [];
+    foreach ($activeRooms as $room) {
+        $roomsByClass[$room['class_id']] = $room;
+    }
+} catch (Exception $e) {
+    error_log("Database error in video-classes: " . $e->getMessage());
+    $classes = [];
+    $activeRooms = [];
+    $roomsByClass = [];
 }
 ?>
 
@@ -71,8 +78,22 @@ foreach ($activeRooms as $room) {
         <p>User Role: <?= $userRole ?></p>
         <p>Classes Found: <?= count($classes) ?></p>
         <p>Active Rooms: <?= count($activeRooms) ?></p>
+        <p>Database Status: <?= isset($e) ? 'Error: ' . $e->getMessage() : 'Connected' ?></p>
     </div>
 </div>
+
+<?php if (isset($e)): ?>
+    <div class="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+            <div>
+                <h3 class="text-lg font-bold text-red-800">Database Error</h3>
+                <p class="text-red-600">Terjadi kesalahan saat mengambil data. Mohon hubungi administrator.</p>
+                <p class="text-sm text-red-500 mt-2">Error: <?= htmlspecialchars($e->getMessage()) ?></p>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <?php if (empty($classes)): ?>
