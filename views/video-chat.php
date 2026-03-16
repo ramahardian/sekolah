@@ -1326,12 +1326,16 @@ async function shareScreen() {
             if (sender) sender.replaceTrack(vt);
         }
         const $shareBtn = document.getElementById('shareBtn');
-        $shareBtn.classList.add('off');
-        $shareBtn.innerHTML = '<i class="fas fa-stop-circle"></i><span class="lbl">Stop Share</span>';
+        if ($shareBtn) {
+            $shareBtn.classList.add('off');
+            $shareBtn.innerHTML = '<i class="fas fa-stop-circle"></i><span class="lbl">Stop Share</span>';
+        }
         vt.onended = () => {
             if (localStream) $localVideo.srcObject = localStream;
-            $shareBtn.classList.remove('off');
-            $shareBtn.innerHTML = '<i class="fas fa-desktop"></i><span class="lbl">Share Screen</span>';
+            if ($shareBtn) {
+                $shareBtn.classList.remove('off');
+                $shareBtn.innerHTML = '<i class="fas fa-desktop"></i><span class="lbl">Share Screen</span>';
+            }
         };
     } catch (e) { console.warn('Screen share:', e); }
 }
@@ -1434,7 +1438,7 @@ function getLastMsgId() {
     return rows.length > 0 ? rows[rows.length - 1].dataset.messageId : 0;
 }
 
-function deleteMessage(messageId) {
+async function deleteMessage(messageId) {
     if (!confirm('Hapus pesan ini?')) return;
     
     try {
@@ -1544,7 +1548,7 @@ function appendMessage(msg) {
             <div class="msg-time">
                 ${time}
                 ${isOwn ? '<i class="fas fa-check" style="font-size:9px;color:#93c5fd;"></i>' : ''}
-                <button class="msg-delete-btn" onclick="deleteMessage('${msg.id}')" title="Hapus pesan">
+                <button class="msg-delete-btn" onclick="deleteMessage(${msg.id})" title="Hapus pesan">
                     <i class="fas fa-trash" style="font-size:9px;color:#ef4444;"></i>
                 </button>
             </div>
