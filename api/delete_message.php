@@ -68,13 +68,27 @@ try {
         exit;
     }
 
-    // Soft delete the message (mark as deleted)
-    $stmt = $pdo->prepare("
-        UPDATE chat_messages 
-        SET is_deleted = 1, deleted_at = NOW(), deleted_by = ? 
-        WHERE id = ?
-    ");
-    $stmt->execute([$userId, $messageId]);
+    // Try soft delete first (if columns exist)
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE chat_messages 
+            SET is_deleted = 1, deleted_at = NOW(), deleted_by = ? 
+            WHERE id = ?
+        ");
+        $stmt->execute([$userId, $messageId]);
+        
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(['success' => true, 'message' => 'Pesan berhasil dihapus']);
+            exit;
+        }
+    } catch (PDOException $e) {
+        // Soft delete columns don't exist, use hard delete instead
+        error_log("Soft delete not available, using hard delete: " . $e->getMessage());
+    }
+
+    // Hard delete the message (actually remove from database)
+    $stmt = $pdo->prepare("DELETE FROM chat_messages WHERE id = ?");
+    $stmt->execute([$messageId]);
 
     if ($stmt->rowCount() > 0) {
         echo json_encode(['success' => true, 'message' => 'Pesan berhasil dihapus']);
@@ -84,9 +98,9 @@ try {
 
 } catch (PDOException $e) {
     error_log("Delete message error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'error' => 'Kesalahan database']);
+    echo json_encode(['success' => false, 'error' => 'Kesalahan database: ' . $e->getMessage()]);
 } catch (Exception $e) {
     error_log("Delete message error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'error' => 'Terjadi kesalahan']);
+    echo json_encode(['success' => false, 'error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
 }
 ?>
