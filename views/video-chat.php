@@ -123,7 +123,13 @@ try {
 // Ambil pesan terakhir
 try {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.username, u.full_name, u.role as user_role 
+        SELECT m.*, u.username, 
+               CASE 
+                   WHEN u.role = 'guru' THEN (SELECT g.nama_guru FROM guru g WHERE g.user_id = u.id)
+                   WHEN u.role = 'siswa' THEN (SELECT s.nama_siswa FROM siswa s WHERE s.user_id = u.id)
+                   ELSE u.username
+               END as full_name,
+               u.role as user_role 
         FROM chat_messages m 
         JOIN users u ON m.user_id = u.id 
         WHERE m.room_id = ? AND m.is_deleted = 0 
@@ -142,7 +148,13 @@ try {
 // Ambil participant yang online
 try {
     $stmt = $pdo->prepare("
-        SELECT p.*, u.username, u.full_name, u.role as user_role 
+        SELECT p.*, u.username, 
+               CASE 
+                   WHEN u.role = 'guru' THEN (SELECT g.nama_guru FROM guru g WHERE g.user_id = u.id)
+                   WHEN u.role = 'siswa' THEN (SELECT s.nama_siswa FROM siswa s WHERE s.user_id = u.id)
+                   ELSE u.username
+               END as full_name,
+               u.role as user_role 
         FROM room_participants p 
         JOIN users u ON p.user_id = u.id 
         WHERE p.room_id = ? AND p.is_online = 1 
