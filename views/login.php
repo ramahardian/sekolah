@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
             <div class="mb-8 flex items-center gap-2">
                 <div class="bg-[#002147] p-2 rounded-lg text-white">
-                    <i class="fas fa-chart-line fa-lg"></i>
+                    <i class="fas fa-graduation-cap fa-lg"></i>
                 </div>
                 <span class="text-2xl font-bold text-slate-800">SiS <span class="text-[#002147] font-oswald font-semibold text-lg italic">mealify</span></span>
             </div>
