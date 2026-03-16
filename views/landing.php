@@ -412,6 +412,93 @@ $headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
                     </div>
                 </section>
 
+            <?php elseif ($layout === 'contact'): ?>
+                <?php
+                $contactLines = parse_lines($sec['body'] ?? '');
+                $contacts = [];
+                foreach ($contactLines as $line) {
+                    $parts = array_map('trim', explode('|', $line));
+                    if (count($parts) >= 2) {
+                        $icon = 'fa-info-circle';
+                        if (stripos($parts[0], 'alamat') !== false) $icon = 'fa-map-marker-alt';
+                        elseif (stripos($parts[0], 'email') !== false) $icon = 'fa-envelope';
+                        elseif (stripos($parts[0], 'telepon') !== false || stripos($parts[0], 'phone') !== false) $icon = 'fa-phone';
+                        
+                        $contacts[] = [
+                            'label' => $parts[0],
+                            'value' => $parts[1],
+                            'icon' => $icon
+                        ];
+                    }
+                }
+
+                if (!$contacts) {
+                    $contacts = [
+                        ['label' => 'Alamat', 'value' => 'Jl. Pendidikan No. 10', 'icon' => 'fa-map-marker-alt'],
+                        ['label' => 'Email', 'value' => 'info@sekolah.sch.id', 'icon' => 'fa-envelope'],
+                        ['label' => 'Telepon', 'value' => '021-123456', 'icon' => 'fa-phone']
+                    ];
+                }
+                ?>
+                <section id="<?= htmlspecialchars($sec['section_key'] ?? 'contact', ENT_QUOTES, 'UTF-8') ?>" class="py-20 px-12 bg-gray-50">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="text-center mb-16">
+                            <h2 class="heading-oswald text-4xl font-bold text-[#002147] uppercase mb-4 tracking-tight">
+                                <?= htmlspecialchars($sec['title'] ?? 'Kontak') ?>
+                            </h2>
+                            <div class="w-20 h-1 bg-[#ffae01] mx-auto mb-6"></div>
+                            <p class="text-gray-600 max-w-2xl mx-auto">
+                                <?= htmlspecialchars($sec['subtitle'] ?? 'Hubungi kami') ?>
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-8 mb-12">
+                            <?php foreach ($contacts as $contact): ?>
+                                <div class="bg-white p-8 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300">
+                                    <div class="w-16 h-16 bg-[#ffae01] rounded-full flex items-center justify-center text-[#002147] mx-auto mb-4">
+                                        <i class="fas <?= htmlspecialchars($contact['icon'], ENT_QUOTES, 'UTF-8') ?> text-xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-lg text-[#002147] mb-2">
+                                        <?= htmlspecialchars($contact['label'], ENT_QUOTES, 'UTF-8') ?>
+                                    </h4>
+                                    <p class="text-gray-600">
+                                        <?= htmlspecialchars($contact['value'], ENT_QUOTES, 'UTF-8') ?>
+                                    </p>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h3 class="heading-oswald text-2xl font-bold text-[#002147] mb-6 text-center">
+                                Kirim Pesan
+                            </h3>
+                            <form class="max-w-2xl mx-auto">
+                                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="Masukkan nama Anda">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                        <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="email@example.com">
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Subjek</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="Subjek pesan">
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pesan</label>
+                                    <textarea rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffae01] focus:border-transparent outline-none" placeholder="Tulis pesan Anda di sini..."></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-[#002147] hover:bg-[#ffae01] text-white font-bold py-4 rounded-lg transition-colors duration-300">
+                                    Kirim Pesan
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
             <?php elseif ($layout === 'content'): ?>
                 <section id="<?= htmlspecialchars($sec['section_key'] ?? 'section', ENT_QUOTES, 'UTF-8') ?>"
                     class="py-20 px-12 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
