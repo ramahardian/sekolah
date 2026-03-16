@@ -53,7 +53,7 @@ $ujianList = $ujianListStmt->fetchAll(PDO::FETCH_ASSOC);
         </span>.</p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center">
         <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
             <i class="fas fa-book fa-2x"></i>
@@ -88,6 +88,15 @@ $ujianList = $ujianListStmt->fetchAll(PDO::FETCH_ASSOC);
         <div>
             <p class="text-sm text-gray-500 font-medium uppercase">Jadwal Mengajar</p>
             <h3 class="text-2xl font-bold text-gray-800"><?= $totalJadwal ?></h3>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center cursor-pointer hover:shadow-md transition-shadow" onclick="window.location.href='index.php?page=video-classes'">
+        <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+            <i class="fas fa-video fa-2x"></i>
+        </div>
+        <div>
+            <p class="text-sm text-gray-500 font-medium uppercase">Video Chat</p>
+            <h3 class="text-lg font-bold text-gray-800">Kelas Online</h3>
         </div>
     </div>
 </div>
