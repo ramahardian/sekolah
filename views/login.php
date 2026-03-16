@@ -109,11 +109,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div>
                     <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Password</label>
                     <div class="relative">
-                        <input type="password" name="password" required
+                        <input type="password" name="password" required id="passwordInput"
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-300"
                             placeholder="••••••••">
-                        <button type="button" class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600">
-                            <i class="far fa-eye-slash"></i>
+                        <button type="button" class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600" onclick="togglePassword()">
+                            <i class="far fa-eye-slash" id="eyeIcon"></i>
                         </button>
                     </div>
                 </div>
@@ -144,5 +144,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.className = 'far fa-eye';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.className = 'far fa-eye-slash';
+            }
+        }
+    </script>
 </body>
 </html>
