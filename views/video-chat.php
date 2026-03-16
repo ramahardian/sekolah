@@ -92,42 +92,70 @@ if (!$room) {
 }
 
 $debugInfo['final_room_id'] = $room['id'];
-?>
+
 // Tambahkan user sebagai participant jika belum ada
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM room_participants WHERE room_id = ? AND user_id = ?");
-$stmt->execute([$room['id'], $userId]);
-if ($stmt->fetchColumn() == 0) {
-    $role = ($userRole === 'teacher' || $userRole === 'admin') ? 'teacher' : 'student';
-    $stmt = $pdo->prepare("INSERT INTO room_participants (room_id, user_id, role) VALUES (?, ?, ?)");
-    $stmt->execute([$room['id'], $userId, $role]);
+try {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM room_participants WHERE room_id = ? AND user_id = ?");
+    $stmt->execute([$room['id'], $userId]);
+    if ($stmt->fetchColumn() == 0) {
+        $role = ($userRole === 'teacher' || $userRole === 'admin') ? 'teacher' : 'student';
+        $stmt = $pdo->prepare("INSERT INTO room_participants (room_id, user_id, role) VALUES (?, ?, ?)");
+        $stmt->execute([$room['id'], $userId, $role]);
+        $debugInfo['participant_added'] = true;
+    } else {
+        $debugInfo['participant_added'] = false;
+    }
+} catch (Exception $e) {
+    $debugInfo['participant_error'] = $e->getMessage();
+    $debugInfo['participant_added'] = false;
 }
 
 // Update last seen
-$stmt = $pdo->prepare("UPDATE room_participants SET last_seen_at = NOW(), is_online = 1 WHERE room_id = ? AND user_id = ?");
-$stmt->execute([$room['id'], $userId]);
+try {
+    $stmt = $pdo->prepare("UPDATE room_participants SET last_seen_at = NOW(), is_online = 1 WHERE room_id = ? AND user_id = ?");
+    $stmt->execute([$room['id'], $userId]);
+    $debugInfo['last_seen_updated'] = true;
+} catch (Exception $e) {
+    $debugInfo['last_seen_error'] = $e->getMessage();
+    $debugInfo['last_seen_updated'] = false;
+}
 
 // Ambil pesan terakhir
-$stmt = $pdo->prepare("
-    SELECT m.*, u.username, u.full_name, u.role as user_role 
-    FROM chat_messages m 
-    JOIN users u ON m.user_id = u.id 
-    WHERE m.room_id = ? AND m.is_deleted = 0 
-    ORDER BY m.created_at DESC 
-    LIMIT 50
-");
-$stmt->execute([$room['id']]);
-$messages = array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
+try {
+    $stmt = $pdo->prepare("
+        SELECT m.*, u.username, u.full_name, u.role as user_role 
+        FROM chat_messages m 
+        JOIN users u ON m.user_id = u.id 
+        WHERE m.room_id = ? AND m.is_deleted = 0 
+        ORDER BY m.created_at DESC 
+        LIMIT 50
+    ");
+    $stmt->execute([$room['id']]);
+    $messages = array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
+    $debugInfo['messages_loaded'] = count($messages);
+} catch (Exception $e) {
+    $debugInfo['messages_error'] = $e->getMessage();
+    $messages = [];
+    $debugInfo['messages_loaded'] = 0;
+}
 
 // Ambil participant yang online
-$stmt = $pdo->prepare("
-    SELECT p.*, u.username, u.full_name, u.role as user_role 
-    FROM room_participants p 
-    JOIN users u ON p.user_id = u.id 
-    WHERE p.room_id = ? AND p.is_online = 1 
-    ORDER BY p.joined_at
-");
-$stmt->execute([$room['id']]);
-$participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.username, u.full_name, u.role as user_role 
+        FROM room_participants p 
+        JOIN users u ON p.user_id = u.id 
+        WHERE p.room_id = ? AND p.is_online = 1 
+        ORDER BY p.joined_at
+    ");
+    $stmt->execute([$room['id']]);
+    $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $debugInfo['participants_loaded'] = count($participants);
+} catch (Exception $e) {
+    $debugInfo['participants_error'] = $e->getMessage();
+    $participants = [];
+    $debugInfo['participants_loaded'] = 0;
+}
 ?>
 
 <!-- Debug Info (remove in production) -->
@@ -144,12 +172,36 @@ $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div><strong>Room Found:</strong> <?= $debugInfo['room_found'] ? 'Yes' : 'No' ?></div>
         <div><strong>Room Created:</strong> <?= $debugInfo['room_created'] ? 'Yes' : 'No' ?></div>
         <div><strong>Final Room ID:</strong> <?= $debugInfo['final_room_id'] ?></div>
+        <div><strong>Participant Added:</strong> <?= $debugInfo['participant_added'] ? 'Yes' : 'No' ?></div>
+        <div><strong>Last Seen Updated:</strong> <?= $debugInfo['last_seen_updated'] ? 'Yes' : 'No' ?></div>
+        <div><strong>Messages Loaded:</strong> <?= $debugInfo['messages_loaded'] ?></div>
+        <div><strong>Participants Loaded:</strong> <?= $debugInfo['participants_loaded'] ?></div>
     </div>
     <div class="mt-2">
         <strong>Class Name:</strong> <?= htmlspecialchars($class['class_name']) ?><br>
         <strong>Room Code:</strong> <?= htmlspecialchars($room['room_code']) ?><br>
         <strong>Room Name:</strong> <?= htmlspecialchars($room['room_name']) ?>
     </div>
+    <?php if (!empty($debugInfo['participant_error'])): ?>
+        <div class="mt-2 text-red-600">
+            <strong>Participant Error:</strong> <?= htmlspecialchars($debugInfo['participant_error']) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($debugInfo['last_seen_error'])): ?>
+        <div class="mt-2 text-red-600">
+            <strong>Last Seen Error:</strong> <?= htmlspecialchars($debugInfo['last_seen_error']) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($debugInfo['messages_error'])): ?>
+        <div class="mt-2 text-red-600">
+            <strong>Messages Error:</strong> <?= htmlspecialchars($debugInfo['messages_error']) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($debugInfo['participants_error'])): ?>
+        <div class="mt-2 text-red-600">
+            <strong>Participants Error:</strong> <?= htmlspecialchars($debugInfo['participants_error']) ?>
+        </div>
+    <?php endif; ?>
 </div>
 
 <!DOCTYPE html>
