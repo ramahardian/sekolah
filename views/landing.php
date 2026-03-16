@@ -282,6 +282,61 @@ $headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
                     </div>
                 </section>
 
+            <?php elseif ($layout === 'features'): ?>
+                <?php
+                $featureLines = parse_lines($sec['body'] ?? '');
+                $features = [];
+                foreach ($featureLines as $line) {
+                    if (!empty(trim($line))) {
+                        $features[] = [
+                            'text' => trim($line),
+                            'icon' => 'fa-check-circle'
+                        ];
+                    }
+                }
+
+                if (!$features) {
+                    $features = [
+                        ['text' => 'Absensi digital harian', 'icon' => 'fa-check-circle'],
+                        ['text' => 'Ujian online & penilaian', 'icon' => 'fa-check-circle'],
+                        ['text' => 'Manajemen kelas, guru, siswa', 'icon' => 'fa-check-circle'],
+                        ['text' => 'Perpustakaan & peminjaman', 'icon' => 'fa-check-circle'],
+                        ['text' => 'Forum komunikasi sekolah', 'icon' => 'fa-check-circle']
+                    ];
+                }
+                ?>
+                <section id="<?= htmlspecialchars($sec['section_key'] ?? 'features', ENT_QUOTES, 'UTF-8') ?>" class="py-20 px-12 bg-gray-50">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="text-center mb-16">
+                            <h2 class="heading-oswald text-4xl font-bold text-[#002147] uppercase mb-4 tracking-tight">
+                                <?= htmlspecialchars($sec['title'] ?? 'Fitur Utama') ?>
+                            </h2>
+                            <div class="w-20 h-1 bg-[#ffae01] mx-auto mb-6"></div>
+                            <p class="text-gray-600 max-w-2xl mx-auto">
+                                <?= htmlspecialchars($sec['subtitle'] ?? 'Semua kebutuhan sekolah dalam satu tempat') ?>
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <?php foreach ($features as $feature): ?>
+                                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                                    <div class="flex items-start gap-4">
+                                        <i class="fas <?= htmlspecialchars($feature['icon'], ENT_QUOTES, 'UTF-8') ?> text-[#ffae01] text-xl mt-1"></i>
+                                        <div>
+                                            <h4 class="font-bold text-lg text-[#002147] mb-2">
+                                                <?= htmlspecialchars($feature['text'], ENT_QUOTES, 'UTF-8') ?>
+                                            </h4>
+                                            <p class="text-gray-600 text-sm">
+                                                Solusi terintegrasi untuk <?= strtolower(htmlspecialchars($feature['text'], ENT_QUOTES, 'UTF-8')) ?> di sekolah Anda.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+
             <?php elseif ($layout === 'content'): ?>
                 <section id="<?= htmlspecialchars($sec['section_key'] ?? 'section', ENT_QUOTES, 'UTF-8') ?>"
                     class="py-20 px-12 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">

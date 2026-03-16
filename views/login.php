@@ -67,8 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@500;600;700&display=swap');
+        body { font-family: 'Roboto', sans-serif; }
+        .font-oswald { font-family: 'Oswald', sans-serif; }
         .bg-custom-blue { background-color: #3b71fe; }
     </style>
 </head>
@@ -82,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="bg-blue-600 p-2 rounded-lg text-white">
                     <i class="fas fa-chart-line fa-lg"></i>
                 </div>
-                <span class="text-2xl font-bold text-slate-800">SiS <span class="text-blue-600 font-medium text-lg italic">mealify</span></span>
+                <span class="text-2xl font-bold text-slate-800">SiS <span class="text-blue-600 font-oswald font-semibold text-lg italic">mealify</span></span>
             </div>
 
             
