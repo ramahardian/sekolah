@@ -30,9 +30,9 @@ $userId   = $_SESSION['user_id'] ?? 0;
 
 // Cek apakah user adalah guru atau siswa di kelas ini
 $classAccess = false;
-if ($userRole === 'admin' || $userRole === 'teacher') {
+if ($userRole === 'admin' || $userRole === 'teacher' || $userRole === 'guru') {
     $classAccess = true;
-    $debugInfo['access_reason'] = 'Admin/Teacher access';
+    $debugInfo['access_reason'] = 'Admin/Teacher/Guru access';
 } else {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM student_classes WHERE student_id = ? AND class_id = ?");
     $stmt->execute([$userId, $classId]);
@@ -861,9 +861,9 @@ body {
                 </h3>
                 <div class="flex items-center gap-1">
                     <?php if ($userRole === 'teacher' || $userRole === 'admin' || $userRole === 'guru'): ?>
-                        <button class="hbtn" onclick="clearChat()" title="Bersihkan Semua Pesan" style="padding:4px 8px;font-size:11px;color:#ef4444;">
+                        <button class="hbtn" onclick="clearChat()" title="Bersihkan Semua Pesan" style="padding:4px 10px;font-size:11px;color:#fff;background:#ef4444;border-radius:4px;margin-right:8px;">
                             <i class="fas fa-trash-alt"></i>
-                            <span class="hidden xs:inline ml-1">Bersihkan Chat</span>
+                            <span class="ml-1">Bersihkan Chat</span>
                         </button>
                     <?php endif; ?>
                     <button class="panel-close-btn" onclick="toggleChat()">
