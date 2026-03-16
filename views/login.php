@@ -85,10 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span class="text-2xl font-bold text-slate-800">SiS <span class="text-blue-600 font-medium text-lg italic">mealify</span></span>
             </div>
 
-            <div class="mb-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-800">Masuk</h2>
-                <p class="text-gray-400 mt-2">Selamat datang kembali! Silakan masukkan detail Anda</p>
-            </div>
+            
 
             <?php if (!empty($error)): ?>
                 <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg" role="alert">
