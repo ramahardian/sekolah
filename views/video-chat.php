@@ -384,20 +384,120 @@ try {
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
         
-        /* Responsive adjustments */
+        /* Local video positioning */
+        #localVideoContainer {
+            transition: all 0.3s ease;
+        }
+        
         @media (max-width: 768px) {
+            #localVideoContainer {
+                width: 120px;
+                height: 90px;
+                bottom: 70px;
+                left: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #localVideoContainer {
+                width: 80px;
+                height: 60px;
+                bottom: 60px;
+                left: 8px;
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
             .video-section {
                 flex: 0 0 60%;
             }
             .chat-section {
                 flex: 0 0 40%;
             }
+        }
+        
+        @media (max-width: 768px) {
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .video-section {
+                flex: 1;
+                width: 100%;
+            }
+            
+            .chat-section {
+                flex: 0 0 40%;
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #e1e5e9;
+            }
+            
             .sidebar-panel {
                 position: absolute;
                 right: 0;
                 top: 0;
                 height: 100%;
                 z-index: 50;
+                width: 280px;
+            }
+            
+            .video-container {
+                border-radius: 4px;
+            }
+            
+            .zoom-controls {
+                padding: 8px;
+            }
+            
+            .btn-zoom {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+            }
+            
+            .btn-zoom i {
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .zoom-header {
+                padding: 8px 12px;
+            }
+            
+            .zoom-header h1 {
+                font-size: 14px;
+            }
+            
+            .zoom-header p {
+                font-size: 10px;
+            }
+            
+            .video-section {
+                padding: 8px;
+            }
+            
+            #localVideoContainer {
+                width: 80px;
+                height: 60px;
+                bottom: 8px;
+                right: 8px;
+            }
+            
+            .zoom-controls {
+                padding: 6px;
+            }
+            
+            .btn-zoom {
+                width: 36px;
+                height: 36px;
+                padding: 6px;
+            }
+            
+            .btn-zoom i {
+                font-size: 12px;
             }
         }
     </style>
@@ -466,8 +566,8 @@ try {
                         </div>
                     </div>
                     
-                    <!-- Local Video (Picture-in-Picture) -->
-                    <div id="localVideoContainer" class="absolute bottom-4 right-4 w-40 h-30 video-container shadow-lg">
+                    <!-- Local Video (Bottom Position) -->
+                    <div id="localVideoContainer" class="absolute bottom-20 left-4 w-48 h-36 video-container shadow-lg">
                         <video id="localVideo" class="video-element" autoplay muted playsinline></video>
                         <div class="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
                             You
@@ -475,23 +575,11 @@ try {
                     </div>
                 </div>
                 
-                <!-- Video Controls -->
+                <!-- Simplified Video Controls -->
                 <div class="zoom-controls flex-shrink-0">
-                    <div class="flex justify-center items-center gap-2">
+                    <div class="flex justify-center items-center gap-3">
                         <button id="muteBtn" onclick="toggleMute()" class="btn-zoom text-white p-3 rounded-full transition-all">
                             <i class="fas fa-microphone text-lg"></i>
-                        </button>
-                        <button id="videoBtn" onclick="toggleVideo()" class="btn-zoom text-white p-3 rounded-full transition-all">
-                            <i class="fas fa-video text-lg"></i>
-                        </button>
-                        <button onclick="shareScreen()" class="btn-zoom text-white p-3 rounded-full transition-all">
-                            <i class="fas fa-desktop text-lg"></i>
-                        </button>
-                        <button onclick="toggleChat()" class="btn-zoom text-white p-3 rounded-full transition-all">
-                            <i class="fas fa-comment text-lg"></i>
-                        </button>
-                        <button onclick="toggleRecord()" class="btn-zoom text-white p-3 rounded-full transition-all">
-                            <i class="fas fa-record-vinyl text-lg text-red-400"></i>
                         </button>
                         <button onclick="endCall()" class="btn-zoom danger text-white p-3 rounded-full transition-all">
                             <i class="fas fa-phone-slash text-lg"></i>
