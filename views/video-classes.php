@@ -48,6 +48,9 @@ if (!empty($classIds)) {
     ");
     $stmt->execute($classIds);
     $activeRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    // Debug: Show if no classes found
+    error_log("No classes found for user: $userId, role: $userRole");
 }
 
 // Group rooms by class
@@ -60,10 +63,39 @@ foreach ($activeRooms as $room) {
 <div class="mb-8">
     <h1 class="text-2xl font-bold text-gray-800">Kelas Video Chat</h1>
     <p class="text-gray-500">Pilih kelas untuk memulai video chat dan diskusi</p>
+    
+    <!-- Debug Info -->
+    <div class="mt-4 p-4 bg-gray-100 rounded-lg text-sm">
+        <p><strong>Debug Info:</strong></p>
+        <p>User ID: <?= $userId ?></p>
+        <p>User Role: <?= $userRole ?></p>
+        <p>Classes Found: <?= count($classes) ?></p>
+        <p>Active Rooms: <?= count($activeRooms) ?></p>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <?php foreach ($classes as $class): ?>
+    <?php if (empty($classes)): ?>
+        <div class="col-span-full">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                <i class="fas fa-chalkboard text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-bold text-gray-700 mb-2">Tidak Ada Kelas</h3>
+                <p class="text-gray-500">
+                    <?php if ($userRole === 'admin' || $userRole === 'teacher'): ?>
+                        Belum ada data kelas. Silakan tambahkan kelas terlebih dahulu.
+                    <?php else: ?>
+                        Anda belum terdaftar dalam kelas manapun.
+                    <?php endif; ?>
+                </p>
+                <?php if ($userRole === 'admin'): ?>
+                    <a href="index.php?page=kelas-tambah" class="mt-4 inline-block bg-[#002147] hover:bg-[#001a35] text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Tambah Kelas
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php else: ?>
+        <?php foreach ($classes as $class): ?>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
             <!-- Class Header -->
             <div class="bg-gradient-to-r from-[#002147] to-[#001a35] p-4 text-white">
@@ -136,7 +168,22 @@ foreach ($activeRooms as $room) {
     </div>
 <?php endif; ?>
 
-<!-- Success/Error Messages -->
+<?php if (isset($_SESSION['success'])): ?>
+    <div class="fixed top-4 right-4 z-50">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 p-4 max-w-sm">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                <div>
+                    <p class="font-bold">Berhasil</p>
+                    <p class="text-sm text-gray-600"><?= htmlspecialchars($_SESSION['success']) ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+
+<!-- Notification Toast -->
 <div id="notification" class="fixed top-4 right-4 z-50 hidden">
     <div class="bg-white rounded-lg shadow-lg border-l-4 p-4 max-w-sm">
         <div class="flex items-center">
@@ -223,19 +270,3 @@ function time_ago(datetime) {
     return Math.floor(seconds / 86400) + ' hari lalu';
 }
 </script>
-
-<?php
-// Helper function for time ago (if not defined elsewhere)
-if (!function_exists('time_ago')) {
-    function time_ago($datetime) {
-        $time = strtotime($datetime);
-        $now = time();
-        $seconds = $now - $time;
-        
-        if ($seconds < 60) return 'Baru saja';
-        if ($seconds < 3600) return floor($seconds / 60) . ' menit lalu';
-        if ($seconds < 86400) return floor($seconds / 3600) . ' jam lalu';
-        return floor($seconds / 86400) . ' hari lalu';
-    }
-}
-?>
