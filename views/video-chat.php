@@ -906,9 +906,7 @@ body {
                                 <div class="msg-avatar"><?= $initial ?></div>
                             <?php endif; ?>
                             <div class="msg-content">
-                                <?php if (!$isOwn): ?>
-                                    <p class="msg-sender"><?= $name ?></p>
-                                <?php endif; ?>
+                                <p class="msg-sender"><?= $isOwn ? 'Anda' : $name ?></p>
                                 <div class="msg-bubble <?= $isOwn ? 'own-bubble' : 'other-bubble' ?>">
                                     <?= htmlspecialchars($msg['message']) ?>
                                 </div>
@@ -1607,7 +1605,7 @@ function appendMessage(msg) {
     row.innerHTML = `
         ${!isOwn ? `<div class="msg-avatar">${initial}</div>` : ''}
         <div class="msg-content">
-            ${!isOwn ? `<p class="msg-sender">${escHtml(name)}</p>` : ''}
+            <p class="msg-sender">${isOwn ? 'Anda' : escHtml(name)}</p>
             <div class="msg-bubble ${isOwn ? 'own-bubble' : 'other-bubble'}">${escHtml(msg.message)}</div>
             <div class="msg-time">
                 ${time}
