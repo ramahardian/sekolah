@@ -170,52 +170,6 @@ try {
 }
 ?>
 
-<!-- Debug Info (remove in production) -->
-<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-    <h3 class="text-lg font-bold text-yellow-800 mb-2">Debug Info:</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-        <div><strong>Class ID:</strong> <?= $debugInfo['class_id'] ?></div>
-        <div><strong>Room ID:</strong> <?= $debugInfo['room_id'] ?></div>
-        <div><strong>User ID:</strong> <?= $debugInfo['user_id'] ?></div>
-        <div><strong>User Role:</strong> <?= $debugInfo['user_role'] ?></div>
-        <div><strong>Access Granted:</strong> <?= $debugInfo['access_granted'] ? 'Yes' : 'No' ?></div>
-        <div><strong>Access Reason:</strong> <?= $debugInfo['access_reason'] ?? 'N/A' ?></div>
-        <div><strong>Class Found:</strong> <?= $debugInfo['class_found'] ? 'Yes' : 'No' ?></div>
-        <div><strong>Room Found:</strong> <?= $debugInfo['room_found'] ? 'Yes' : 'No' ?></div>
-        <div><strong>Room Created:</strong> <?= $debugInfo['room_created'] ? 'Yes' : 'No' ?></div>
-        <div><strong>Final Room ID:</strong> <?= $debugInfo['final_room_id'] ?></div>
-        <div><strong>Participant Added:</strong> <?= $debugInfo['participant_added'] ? 'Yes' : 'No' ?></div>
-        <div><strong>Last Seen Updated:</strong> <?= $debugInfo['last_seen_updated'] ? 'Yes' : 'No' ?></div>
-        <div><strong>Messages Loaded:</strong> <?= $debugInfo['messages_loaded'] ?></div>
-        <div><strong>Participants Loaded:</strong> <?= $debugInfo['participants_loaded'] ?></div>
-    </div>
-    <div class="mt-2">
-        <strong>Class Name:</strong> <?= htmlspecialchars($class['class_name']) ?><br>
-        <strong>Room Code:</strong> <?= htmlspecialchars($room['room_code']) ?><br>
-        <strong>Room Name:</strong> <?= htmlspecialchars($room['room_name']) ?>
-    </div>
-    <?php if (!empty($debugInfo['participant_error'])): ?>
-        <div class="mt-2 text-red-600">
-            <strong>Participant Error:</strong> <?= htmlspecialchars($debugInfo['participant_error']) ?>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($debugInfo['last_seen_error'])): ?>
-        <div class="mt-2 text-red-600">
-            <strong>Last Seen Error:</strong> <?= htmlspecialchars($debugInfo['last_seen_error']) ?>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($debugInfo['messages_error'])): ?>
-        <div class="mt-2 text-red-600">
-            <strong>Messages Error:</strong> <?= htmlspecialchars($debugInfo['messages_error']) ?>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($debugInfo['participants_error'])): ?>
-        <div class="mt-2 text-red-600">
-            <strong>Participants Error:</strong> <?= htmlspecialchars($debugInfo['participants_error']) ?>
-        </div>
-    <?php endif; ?>
-</div>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -226,7 +180,12 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@500;600&display=swap');
-        body { font-family: 'Roboto', sans-serif; }
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
         .heading-oswald { font-family: 'Oswald', sans-serif; }
         
         /* Custom scrollbar */
@@ -318,229 +277,283 @@ try {
         .message-animate {
             animation: slideInUp 0.3s ease-out;
         }
+        
+        /* Layout fixes */
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .video-section {
+            flex: 0 0 50%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-section {
+            flex: 0 0 50%;
+            display: flex;
+            flex-direction: column;
+            min-width: 0; /* Prevent flex item from overflowing */
+        }
+        
+        .sidebar-panel {
+            flex: 0 0 320px;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-panel.hidden {
+            transform: translateX(100%);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .video-section {
+                flex: 0 0 60%;
+            }
+            .chat-section {
+                flex: 0 0 40%;
+            }
+            .sidebar-panel {
+                position: absolute;
+                right: 0;
+                top: 0;
+                height: 100%;
+                z-index: 50;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100">
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white shadow-2xl">
-        <div class="px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <a href="index.php?page=video-classes" class="text-white hover:text-[#ffae01] transition-all duration-300 transform hover:scale-110">
-                        <i class="fas fa-arrow-left text-xl"></i>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl font-bold heading-oswald flex items-center gap-2">
-                            <i class="fas fa-video text-[#ffae01]"></i>
-                            Kelas <?= htmlspecialchars($class['class_name']) ?>
-                        </h1>
-                        <p class="text-sm text-gray-300 flex items-center gap-2">
-                            <i class="fas fa-circle text-green-400 text-xs pulse-animation"></i>
-                            Video Chat & Grup Diskusi
-                        </p>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white shadow-2xl flex-shrink-0">
+            <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <a href="index.php?page=video-classes" class="text-white hover:text-[#ffae01] transition-all duration-300 transform hover:scale-110">
+                            <i class="fas fa-arrow-left text-xl"></i>
+                        </a>
+                        <div>
+                            <h1 class="text-2xl font-bold heading-oswald flex items-center gap-2">
+                                <i class="fas fa-video text-[#ffae01]"></i>
+                                Kelas <?= htmlspecialchars($class['class_name']) ?>
+                            </h1>
+                            <p class="text-sm text-gray-300 flex items-center gap-2">
+                                <i class="fas fa-circle text-green-400 text-xs pulse-animation"></i>
+                                Video Chat & Grup Diskusi
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full">
-                        <i class="fas fa-users text-[#ffae01]"></i>
-                        <span class="text-sm font-medium"><?= count($participants) ?> Online</span>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full">
+                            <i class="fas fa-users text-[#ffae01]"></i>
+                            <span class="text-sm font-medium"><?= count($participants) ?> Online</span>
+                        </div>
+                        <button onclick="toggleParticipants()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-300 btn-hover">
+                            <i class="fas fa-user-friends text-lg"></i>
+                        </button>
+                        <button onclick="toggleSettings()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-300 btn-hover">
+                            <i class="fas fa-cog text-lg"></i>
+                        </button>
                     </div>
-                    <button onclick="toggleParticipants()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-300 btn-hover">
-                        <i class="fas fa-user-friends text-lg"></i>
-                    </button>
-                    <button onclick="toggleSettings()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-300 btn-hover">
-                        <i class="fas fa-cog text-lg"></i>
-                    </button>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Content -->
-    <main class="flex h-[calc(100vh-80px)]">
-        <!-- Video Section -->
-        <section class="w-1/2 bg-gradient-to-br from-gray-900 to-black flex flex-col">
-            <div class="flex-1 relative p-4">
-                <!-- Main Video (Remote) -->
-                <div id="mainVideo" class="video-container w-full h-full">
-                    <video id="remoteVideo" class="video-element" autoplay playsinline></video>
-                    <div id="noRemoteVideo" class="absolute inset-0 flex items-center justify-center text-white">
-                        <div class="text-center">
-                            <div class="mb-6">
-                                <i class="fas fa-video-slash text-7xl text-gray-400 pulse-animation"></i>
+        <!-- Main Content -->
+        <div class="content-area">
+            <!-- Video Section -->
+            <section class="video-section">
+                <div class="flex-1 relative p-4">
+                    <!-- Main Video (Remote) -->
+                    <div id="mainVideo" class="video-container w-full h-full">
+                        <video id="remoteVideo" class="video-element" autoplay playsinline></video>
+                        <div id="noRemoteVideo" class="absolute inset-0 flex items-center justify-center text-white">
+                            <div class="text-center">
+                                <div class="mb-6">
+                                    <i class="fas fa-video-slash text-7xl text-gray-400 pulse-animation"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2">Menunggu Peserta</h3>
+                                <p class="text-gray-400">Bagikan link room atau tunggu peserta lain bergabung</p>
+                                <div class="mt-4">
+                                    <button onclick="copyRoomLink()" class="bg-[#002147] hover:bg-[#001a35] text-white px-4 py-2 rounded-lg transition-all duration-300 btn-hover">
+                                        <i class="fas fa-link mr-2"></i>Salin Link Room
+                                    </button>
+                                </div>
                             </div>
-                            <h3 class="text-xl font-semibold mb-2">Menunggu Peserta</h3>
-                            <p class="text-gray-400">Bagikan link room atau tunggu peserta lain bergabung</p>
-                            <div class="mt-4">
-                                <button onclick="copyRoomLink()" class="bg-[#002147] hover:bg-[#001a35] text-white px-4 py-2 rounded-lg transition-all duration-300 btn-hover">
-                                    <i class="fas fa-link mr-2"></i>Salin Link Room
-                                </button>
-                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Local Video (Picture-in-Picture) -->
+                    <div id="localVideoContainer" class="absolute bottom-6 right-6 w-48 h-36 video-container shadow-2xl glass">
+                        <video id="localVideo" class="video-element" autoplay muted playsinline></video>
+                        <div class="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-xs text-white">
+                            Anda
                         </div>
                     </div>
                 </div>
                 
-                <!-- Local Video (Picture-in-Picture) -->
-                <div id="localVideoContainer" class="absolute bottom-6 right-6 w-48 h-36 video-container shadow-2xl glass">
-                    <video id="localVideo" class="video-element" autoplay muted playsinline></video>
-                    <div class="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-xs text-white">
-                        Anda
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Video Controls -->
-            <div class="bg-gradient-to-r from-gray-900 to-black p-6 border-t border-gray-800">
-                <div class="flex justify-center items-center gap-3">
-                    <button id="muteBtn" onclick="toggleMute()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                        <i class="fas fa-microphone text-xl group-hover:text-[#ffae01]"></i>
-                    </button>
-                    <button id="videoBtn" onclick="toggleVideo()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                        <i class="fas fa-video text-xl group-hover:text-[#ffae01]"></i>
-                    </button>
-                    <button onclick="shareScreen()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                        <i class="fas fa-desktop text-xl group-hover:text-[#ffae01]"></i>
-                    </button>
-                    <button onclick="toggleChat()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                        <i class="fas fa-comment text-xl group-hover:text-[#ffae01]"></i>
-                    </button>
-                    <button onclick="toggleRecord()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                        <i class="fas fa-record-vinyl text-xl group-hover:text-red-500"></i>
-                    </button>
-                    <button onclick="endCall()" class="bg-red-600 hover:bg-red-700 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                        <i class="fas fa-phone-slash text-xl"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chat Section -->
-        <section id="chatSection" class="w-1/2 bg-white flex flex-col">
-            <!-- Chat Header -->
-            <div class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white p-4 border-b">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-comments text-[#ffae01] text-xl"></i>
-                        <div>
-                            <h3 class="font-bold heading-oswald">Grup Diskusi</h3>
-                            <p class="text-xs text-gray-300">Kelas <?= htmlspecialchars($class['class_name']) ?></p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs bg-green-500 px-2 py-1 rounded-full">
-                            <i class="fas fa-circle text-xs mr-1"></i><?= count($participants) ?> Online
-                        </span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Chat Messages -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-gray-50">
-                <?php if (empty($messages)): ?>
-                    <div class="text-center text-gray-400 py-8">
-                        <i class="fas fa-comment-dots text-4xl mb-3"></i>
-                        <p>Belum ada pesan. Mulai percakapan!</p>
-                    </div>
-                <?php else: ?>
-                    <?php foreach ($messages as $message): ?>
-                        <div class="mb-4 <?= $message['user_id'] == $userId ? 'text-right' : 'text-left' ?> message-animate">
-                            <div class="chat-bubble <?= $message['user_id'] == $userId ? 'sent' : 'received' ?> p-3 rounded-2xl shadow-md">
-                                <?php if ($message['user_id'] != $userId): ?>
-                                    <div class="text-xs text-gray-500 mb-1 font-medium">
-                                        <?= htmlspecialchars($message['full_name'] ?? $message['username']) ?>
-                                    </div>
-                                <?php endif; ?>
-                                <div class="text-sm <?= $message['user_id'] == $userId ? 'text-white' : 'text-gray-800' ?>">
-                                    <?= htmlspecialchars($message['message']) ?>
-                                </div>
-                                <div class="text-xs <?= $message['user_id'] == $userId ? 'text-gray-200' : 'text-gray-400' ?> mt-1">
-                                    <?= date('H:i', strtotime($message['created_at'])) ?>
-                                    <?php if ($message['user_id'] == $userId): ?>
-                                        <i class="fas fa-check-double text-xs ml-1"></i>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-            
-            <!-- Chat Input -->
-            <div class="border-t bg-white p-4">
-                <form id="chatForm" class="flex gap-2">
-                    <div class="flex-1 relative">
-                        <input type="text" id="messageInput" placeholder="Ketik pesan..." 
-                               class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:ring-2 focus:ring-[#002147] focus:border-transparent outline-none transition-all duration-300">
-                        <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#002147] transition-colors">
-                            <i class="fas fa-smile"></i>
+                <!-- Video Controls -->
+                <div class="bg-gradient-to-r from-gray-900 to-black p-6 border-t border-gray-800 flex-shrink-0">
+                    <div class="flex justify-center items-center gap-3">
+                        <button id="muteBtn" onclick="toggleMute()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
+                            <i class="fas fa-microphone text-xl group-hover:text-[#ffae01]"></i>
+                        </button>
+                        <button id="videoBtn" onclick="toggleVideo()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
+                            <i class="fas fa-video text-xl group-hover:text-[#ffae01]"></i>
+                        </button>
+                        <button onclick="shareScreen()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
+                            <i class="fas fa-desktop text-xl group-hover:text-[#ffae01]"></i>
+                        </button>
+                        <button onclick="toggleChat()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
+                            <i class="fas fa-comment text-xl group-hover:text-[#ffae01]"></i>
+                        </button>
+                        <button onclick="toggleRecord()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
+                            <i class="fas fa-record-vinyl text-xl group-hover:text-red-500"></i>
+                        </button>
+                        <button onclick="endCall()" class="bg-red-600 hover:bg-red-700 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
+                            <i class="fas fa-phone-slash text-xl"></i>
                         </button>
                     </div>
-                    <button type="submit" class="bg-[#002147] hover:bg-[#001a35] text-white p-3 rounded-full transition-all duration-300 btn-hover">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
-            </div>
-        </section>
-
-        <!-- Participants Sidebar -->
-        <aside id="participantsSidebar" class="w-80 bg-white border-l shadow-xl hidden">
-            <div class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white p-4 border-b">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-lg heading-oswald flex items-center gap-2">
-                        <i class="fas fa-users text-[#ffae01]"></i>
-                        Peserta (<?= count($participants) ?>)
-                    </h3>
-                    <button onclick="toggleParticipants()" class="text-white hover:text-[#ffae01] transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
-            </div>
-            <div class="overflow-y-auto custom-scrollbar">
-                <?php if (empty($participants)): ?>
-                    <div class="text-center text-gray-400 py-8">
-                        <i class="fas fa-user-slash text-4xl mb-3"></i>
-                        <p>Belum ada peserta online</p>
-                    </div>
-                <?php else: ?>
-                    <?php foreach ($participants as $participant): ?>
-                        <div class="flex items-center gap-3 p-4 hover:bg-gray-50 border-b transition-colors">
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-[#002147] to-[#001a35] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                                    <?= strtoupper(substr($participant['full_name'] ?? $participant['username'], 0, 1)) ?>
-                                </div>
-                                <div class="status-online"></div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="font-semibold text-gray-800">
-                                    <?= htmlspecialchars($participant['full_name'] ?? $participant['username']) ?>
-                                </div>
-                                <div class="text-sm text-gray-500 flex items-center gap-2">
-                                    <?php if ($participant['user_role'] === 'teacher'): ?>
-                                        <i class="fas fa-chalkboard-teacher text-xs"></i>
-                                        <span>Guru</span>
-                                    <?php else: ?>
-                                        <i class="fas fa-graduation-cap text-xs"></i>
-                                        <span>Siswa</span>
-                                    <?php endif; ?>
-                                    <?php if ($participant['user_id'] == $userId): ?>
-                                        <span class="text-xs bg-[#002147] text-white px-2 py-1 rounded-full">Anda</span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <button class="text-gray-400 hover:text-[#002147] transition-colors">
-                                    <i class="fas fa-microphone"></i>
-                                </button>
-                                <button class="text-gray-400 hover:text-[#002147] transition-colors">
-                                    <i class="fas fa-video"></i>
-                                </button>
+            </section>
+
+            <!-- Chat Section -->
+            <section class="chat-section">
+                <!-- Chat Header -->
+                <div class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white p-4 border-b flex-shrink-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-comments text-[#ffae01] text-xl"></i>
+                            <div>
+                                <h3 class="font-bold heading-oswald">Grup Diskusi</h3>
+                                <p class="text-xs text-gray-300">Kelas <?= htmlspecialchars($class['class_name']) ?></p>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </aside>
-    </main>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-green-500 px-2 py-1 rounded-full">
+                                <i class="fas fa-circle text-xs mr-1"></i><?= count($participants) ?> Online
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Messages -->
+                <div id="chatMessages" class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-gray-50">
+                    <?php if (empty($messages)): ?>
+                        <div class="text-center text-gray-400 py-8">
+                            <i class="fas fa-comment-dots text-4xl mb-3"></i>
+                            <p>Belum ada pesan. Mulai percakapan!</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($messages as $message): ?>
+                            <div class="mb-4 <?= $message['user_id'] == $userId ? 'text-right' : 'text-left' ?> message-animate">
+                                <div class="chat-bubble <?= $message['user_id'] == $userId ? 'sent' : 'received' ?> p-3 rounded-2xl shadow-md">
+                                    <?php if ($message['user_id'] != $userId): ?>
+                                        <div class="text-xs text-gray-500 mb-1 font-medium">
+                                            <?= htmlspecialchars($message['full_name'] ?? $message['username']) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="text-sm <?= $message['user_id'] == $userId ? 'text-white' : 'text-gray-800' ?>">
+                                        <?= htmlspecialchars($message['message']) ?>
+                                    </div>
+                                    <div class="text-xs <?= $message['user_id'] == $userId ? 'text-gray-200' : 'text-gray-400' ?> mt-1">
+                                        <?= date('H:i', strtotime($message['created_at'])) ?>
+                                        <?php if ($message['user_id'] == $userId): ?>
+                                            <i class="fas fa-check-double text-xs ml-1"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="border-t bg-white p-4 flex-shrink-0">
+                    <form id="chatForm" class="flex gap-2">
+                        <div class="flex-1 relative">
+                            <input type="text" id="messageInput" placeholder="Ketik pesan..." 
+                                   class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:ring-2 focus:ring-[#002147] focus:border-transparent outline-none transition-all duration-300">
+                            <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#002147] transition-colors">
+                                <i class="fas fa-smile"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="bg-[#002147] hover:bg-[#001a35] text-white p-3 rounded-full transition-all duration-300 btn-hover">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Participants Sidebar -->
+            <aside id="participantsSidebar" class="sidebar-panel bg-white border-l shadow-xl hidden">
+                <div class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white p-4 border-b">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg heading-oswald flex items-center gap-2">
+                            <i class="fas fa-users text-[#ffae01]"></i>
+                            Peserta (<?= count($participants) ?>)
+                        </h3>
+                        <button onclick="toggleParticipants()" class="text-white hover:text-[#ffae01] transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-y-auto custom-scrollbar">
+                    <?php if (empty($participants)): ?>
+                        <div class="text-center text-gray-400 py-8">
+                            <i class="fas fa-user-slash text-4xl mb-3"></i>
+                            <p>Belum ada peserta online</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($participants as $participant): ?>
+                            <div class="flex items-center gap-3 p-4 hover:bg-gray-50 border-b transition-colors">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-[#002147] to-[#001a35] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                        <?= strtoupper(substr($participant['full_name'] ?? $participant['username'], 0, 1)) ?>
+                                    </div>
+                                    <div class="status-online"></div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-800">
+                                        <?= htmlspecialchars($participant['full_name'] ?? $participant['username']) ?>
+                                    </div>
+                                    <div class="text-sm text-gray-500 flex items-center gap-2">
+                                        <?php if ($participant['user_role'] === 'teacher'): ?>
+                                            <i class="fas fa-chalkboard-teacher text-xs"></i>
+                                            <span>Guru</span>
+                                        <?php else: ?>
+                                            <i class="fas fa-graduation-cap text-xs"></i>
+                                            <span>Siswa</span>
+                                        <?php endif; ?>
+                                        <?php if ($participant['user_id'] == $userId): ?>
+                                            <span class="text-xs bg-[#002147] text-white px-2 py-1 rounded-full">Anda</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <button class="text-gray-400 hover:text-[#002147] transition-colors">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-[#002147] transition-colors">
+                                        <i class="fas fa-video"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </aside>
+        </div>
+    </div>
 
     <script>
         // Global variables
