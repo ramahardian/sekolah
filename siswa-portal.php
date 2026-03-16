@@ -179,35 +179,7 @@ $schoolPhone = $settings['school_phone'] ?? '021-123456';
         </div>
     </section>
 
-    
-
-    <!-- Footer -->
-    <footer class="bg-[#002147] text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <h4 class="text-lg font-bold mb-4 heading-oswald"><?= htmlspecialchars($schoolName) ?></h4>
-                    <p class="text-gray-300 mb-2">Sistem Informasi Sekolah Terpadu</p>
-                    <p class="text-sm text-gray-400">Membangun generasi berprestasi melalui teknologi pendidikan modern.</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm text-gray-400 mb-2">Portal Siswa © <?= date('Y') ?></p>
-                    <div class="flex justify-end gap-4">
-                        <a href="#" class="text-gray-400 hover:text-[#ffae01] transition-colors">
-                            <i class="fab fa-facebook text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-[#ffae01] transition-colors">
-                            <i class="fab fa-instagram text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-[#ffae01] transition-colors">
-                            <i class="fab fa-youtube text-xl"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+     
     <!-- Modal for Info -->
     <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
