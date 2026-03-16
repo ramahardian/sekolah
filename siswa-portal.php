@@ -100,45 +100,7 @@ $schoolPhone = $settings['school_phone'] ?? '021-123456';
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient text-white py-20">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 class="text-4xl font-bold heading-oswald mb-6 leading-tight">
-                        Selamat Datang di<br>
-                        <span class="text-[#ffae01]">Portal Siswa</span>
-                    </h2>
-                    <p class="text-xl mb-8 opacity-90">
-                        Akses cepat ke informasi akademik dan absensi digital
-                    </p>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-3 h-3 bg-[#ffae01] rounded-full"></div>
-                            <p class="text-lg">Scan RFID untuk absensi</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-3 h-3 bg-green-400 rounded-full"></div>
-                            <p class="text-lg">Cek nilai dan jadwal</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-3 h-3 bg-blue-400 rounded-full"></div>
-                            <p class="text-lg">Download materi pelajaran</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="relative">
-                    <div class="float-animation">
-                        <i class="fas fa-id-card text-[#ffae01]" style="font-size: 120px;"></i>
-                    </div>
-                    <div class="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-                    <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+ 
 
     <!-- Quick Actions -->
     <section class="py-16">
@@ -217,36 +179,7 @@ $schoolPhone = $settings['school_phone'] ?? '021-123456';
         </div>
     </section>
 
-    <!-- School Info -->
-    <section class="py-16 bg-gray-100">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-map-marker-alt text-white text-2xl"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-2">Alamat</h4>
-                    <p class="text-gray-600"><?= htmlspecialchars($schoolAddress) ?></p>
-                </div>
-                
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-phone text-white text-2xl"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-2">Telepon</h4>
-                    <p class="text-gray-600"><?= htmlspecialchars($schoolPhone) ?></p>
-                </div>
-                
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-envelope text-white text-2xl"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-2">Email</h4>
-                    <p class="text-gray-600">info@<?= strtolower(str_replace(' ', '', $schoolName)) ?>.sch.id</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 
     <!-- Footer -->
     <footer class="bg-[#002147] text-white py-8">
