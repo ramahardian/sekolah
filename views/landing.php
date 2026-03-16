@@ -337,6 +337,81 @@ $headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
                     </div>
                 </section>
 
+            <?php elseif ($layout === 'testimonials'): ?>
+                <?php
+                $testimonialLines = parse_lines($sec['body'] ?? '');
+                $testimonials = [];
+                foreach ($testimonialLines as $line) {
+                    $parts = array_map('trim', explode('|', $line));
+                    if (count($parts) >= 3) {
+                        $testimonials[] = [
+                            'name' => $parts[0],
+                            'role' => $parts[1],
+                            'content' => $parts[2]
+                        ];
+                    }
+                }
+
+                if (!$testimonials) {
+                    $testimonials = [
+                        [
+                            'name' => 'Ibu Rina',
+                            'role' => 'Guru Matematika',
+                            'content' => 'Sistem ini membuat rekap nilai dan absensi jadi jauh lebih cepat.'
+                        ],
+                        [
+                            'name' => 'Andi Pratama',
+                            'role' => 'Siswa Kelas XI',
+                            'content' => 'Ujian online jadi rapi dan tidak bikin bingung.'
+                        ],
+                        [
+                            'name' => 'Budi Santoso',
+                            'role' => 'Wali Kelas',
+                            'content' => 'Monitoring siswa lebih mudah dan transparan.'
+                        ]
+                    ];
+                }
+                ?>
+                <section id="<?= htmlspecialchars($sec['section_key'] ?? 'testimonials', ENT_QUOTES, 'UTF-8') ?>" class="py-20 px-12 bg-[#002147]">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="text-center mb-16">
+                            <h2 class="heading-oswald text-4xl font-bold text-white uppercase mb-4 tracking-tight">
+                                <?= htmlspecialchars($sec['title'] ?? 'Testimoni') ?>
+                            </h2>
+                            <div class="w-20 h-1 bg-[#ffae01] mx-auto mb-6"></div>
+                            <p class="text-gray-300 max-w-2xl mx-auto">
+                                <?= htmlspecialchars($sec['subtitle'] ?? 'Suara dari guru dan siswa') ?>
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <?php foreach ($testimonials as $testimonial): ?>
+                                <div class="bg-white/10 backdrop-blur-sm p-8 rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-300">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-16 h-16 bg-[#ffae01] rounded-full flex items-center justify-center text-[#002147] font-bold text-xl">
+                                            <?= substr(htmlspecialchars($testimonial['name'], ENT_QUOTES, 'UTF-8'), 0, 1) ?>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-bold text-white text-lg">
+                                                <?= htmlspecialchars($testimonial['name'], ENT_QUOTES, 'UTF-8') ?>
+                                            </h4>
+                                            <p class="text-gray-300 text-sm">
+                                                <?= htmlspecialchars($testimonial['role'], ENT_QUOTES, 'UTF-8') ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="relative">
+                                        <i class="fas fa-quote-left text-[#ffae01] text-2xl mb-4"></i>
+                                        <p class="text-gray-200 italic leading-relaxed">
+                                            <?= htmlspecialchars($testimonial['content'], ENT_QUOTES, 'UTF-8') ?>
+                                        </p>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+
             <?php elseif ($layout === 'content'): ?>
                 <section id="<?= htmlspecialchars($sec['section_key'] ?? 'section', ENT_QUOTES, 'UTF-8') ?>"
                     class="py-20 px-12 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
