@@ -130,9 +130,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
             
             <div class="z-10 text-center max-w-sm mb-12">
-                <h1 class="text-4xl font-bold mb-6 leading-tight">Selamat datang kembali! Silakan masuk ke akun Sistem Informasi Sekolah Anda</h1>
+                <h1 class="text-4xl font-bold mb-6 leading-tight">Selamat datang kembali! Masuk ke Sistem Informasi Sekolah</h1>
                 <p class="text-blue-100 opacity-80 leading-relaxed">
-                    Kelola keuangan dan data sekolah dengan dashboard tercanggih kami. Cepat, aman, dan transparan.
+                    Solusi lengkap untuk mengelola data siswa, nilai, kehadiran, dan pembayaran sekolah. Praktis, akurat, dan terintegrasi.
                 </p>
             </div>
 
