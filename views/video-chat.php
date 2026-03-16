@@ -300,25 +300,27 @@ body {
     display: flex;
     flex-direction: column;
     background: #111;
+    min-height: 0;
 }
 
 .video-canvas {
     flex: 1;
     position: relative;
-    padding: 12px;
+    padding: 0;
     min-height: 0;
     display: flex;
     align-items: stretch;
+    overflow: hidden;
 }
 
 /* Main remote video */
 .remote-video-wrap {
     flex: 1;
     background: #1e1e1e;
-    border-radius: 12px;
+    border-radius: 0;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: none;
 }
 .remote-video-wrap video {
     width: 100%; height: 100%; object-fit: cover;
@@ -374,7 +376,7 @@ body {
 /* Local PiP video */
 .local-pip {
     position: absolute;
-    bottom: 22px; right: 22px;
+    bottom: 14px; right: 14px;
     width: 176px; height: 110px;
     background: #2a2a2a;
     border-radius: 10px;
@@ -673,40 +675,58 @@ body {
 
 @media (max-width: 768px) {
     .room-code-badge { display: none; }
-    
-    .content-area { flex-direction: column; position: relative; }
+
+    /* Stack vertically, allow body to scroll on mobile */
+    body { overflow: auto; height: auto; }
+    .app-shell { height: auto; min-height: 100vh; overflow: visible; }
+
+    .content-area {
+        flex-direction: column;
+        position: relative;
+        overflow: visible;
+        height: auto;
+    }
 
     .video-section {
         flex: none;
-        height: 44vh;
+        height: 55vw;
         min-height: 220px;
+        max-height: 56vh;
     }
 
-    /* Chat panel becomes full-width below video */
+    /* Chat panel full-width, height auto so content shows */
     .chat-panel {
         width: 100% !important;
         border-left: none;
         border-top: 1px solid #e5e7eb;
-        flex: 1;
+        height: auto;
+        min-height: 320px;
         display: none;
     }
     .chat-panel.mobile-visible { display: flex; }
 
-    /* Participants slide from right */
-    .participants-panel {
-        position: absolute;
-        top: 0; right: 0; bottom: 0;
-        border-left: 1px solid #e5e7eb;
-        box-shadow: -4px 0 24px rgba(0,0,0,0.15);
-        z-index: 50;
+    /* Messages area gets fixed height on mobile */
+    .messages-area {
+        height: 220px;
+        flex: none;
+        overflow-y: auto;
     }
-    .participants-panel.open { width: 240px; }
+
+    /* Participants slide from right, relative to viewport */
+    .participants-panel {
+        position: fixed;
+        top: 0; right: 0;
+        height: 100vh;
+        border-left: 1px solid #e5e7eb;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.2);
+        z-index: 999;
+    }
+    .participants-panel.open { width: 260px; }
 
     .local-pip { width: 96px; height: 68px; bottom: 12px; right: 12px; }
 
     .mobile-tabbar { display: flex; }
 
-    /* Hide desktop-only ctrl btns on mobile */
     .ctrl-hide-mobile { display: none !important; }
 
     .ctrl-btn { padding: 8px 10px; min-width: 50px; }
@@ -714,10 +734,11 @@ body {
 }
 
 @media (max-width: 480px) {
-    .video-section { height: 38vh; }
+    .video-section { height: 56vw; min-height: 180px; }
     .local-pip { width: 76px; height: 54px; }
     .ctrl-btn { padding: 7px 8px; min-width: 44px; }
     .ctrl-btn i { font-size: 14px; }
+    .messages-area { height: 200px; }
 }
 </style>
 </head>
