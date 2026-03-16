@@ -843,24 +843,6 @@ body {
                         <span class="lbl">Stop Video</span>
                     </button>
 
-                    <!-- Screen share -->
-                    <button id="shareBtn" class="ctrl-btn" onclick="shareScreen()">
-                        <i class="fas fa-desktop"></i>
-                        <span class="lbl">Share Screen</span>
-                    </button>
-
-                    <!-- Participants -->
-                    <button class="ctrl-btn" onclick="toggleParticipants()">
-                        <i class="fas fa-users"></i>
-                        <span class="lbl">Peserta</span>
-                    </button>
-
-                    <!-- Chat -->
-                    <button class="ctrl-btn" onclick="toggleChat()" id="chatCtrlBtn">
-                        <i class="fas fa-comment-dots"></i>
-                        <span class="lbl">Chat</span>
-                    </button>
-
                     <!-- End call -->
                     <button class="ctrl-btn end-btn" onclick="endCall()">
                         <i class="fas fa-phone-slash"></i>
