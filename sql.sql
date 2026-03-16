@@ -311,6 +311,24 @@ CREATE TABLE IF NOT EXISTS `rfid_logs` (
     FOREIGN KEY (`siswa_id`) REFERENCES `siswa`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tabel untuk testimonials
+CREATE TABLE IF NOT EXISTS `testimonials` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
+    `role` varchar(255) DEFAULT NULL,
+    `content` text NOT NULL,
+    `rating` int(1) DEFAULT 5,
+    `image_url` varchar(500) DEFAULT NULL,
+    `is_active` tinyint(1) DEFAULT 1,
+    `created_by` int(11) NOT NULL,
+    `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_is_active` (`is_active`),
+    KEY `idx_created_at` (`created_at`),
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- Tabel untuk room chat per kelas
 CREATE TABLE IF NOT EXISTS `chat_rooms` (

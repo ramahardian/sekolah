@@ -440,7 +440,7 @@ $headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
                     ];
                 }
                 ?>
-                <section id="<?= htmlspecialchars($sec['section_key'] ?? 'contact', ENT_QUOTES, 'UTF-8') ?>" class="py-20 px-12 bg-gray-50">
+                <section id="<?= htmlspecialchars($sec['section_key'] ?? 'contact', ENT_QUOTES, 'UTF-8') ?>" class="py-20 px-12">
                     <div class="max-w-7xl mx-auto">
                         <div class="text-center mb-16">
                             <h2 class="heading-oswald text-4xl font-bold text-[#002147] uppercase mb-4 tracking-tight">
