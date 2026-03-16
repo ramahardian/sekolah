@@ -499,7 +499,7 @@ $headerEmail = $headerSettings['header_email'] ?? 'info@sekolah.sch.id';
     </main>
 
     <footer class="bg-[#00152e] text-white py-12 text-center text-sm opacity-80">
-        &copy; <?= date('Y') ?> SIS Pro - Academic Solution. All Rights Reserved.
+        &copy; <?= date('Y') ?> SIS Mealify - Academic Solution. All Rights Reserved.
     </footer>
 
 </body>
