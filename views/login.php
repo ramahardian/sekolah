@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, 'UTF-8') ?>">
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Email / Username</label>
+                    <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1"> Username</label>
                     <input type="text" name="username" required 
                         class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-300"
                         placeholder="Enter your email">
@@ -126,9 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             
 
-            <p class="mt-8 text-center text-gray-500 text-sm">
-                Don't have an account? <a href="#" class="text-blue-600 font-bold hover:underline">Sign up</a>
-            </p>
+             
         </div>
 
         <div class="hidden md:flex md:w-1/2 bg-custom-blue p-12 flex-col justify-center items-center text-white relative overflow-hidden">
@@ -141,45 +139,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </p>
             </div>
 
-            <div class="relative z-10 w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl text-slate-800">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-lg">Sales Report</h3>
-                    <div class="flex gap-4 text-[10px] text-gray-400">
-                        <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-blue-600"></div> Profit</span>
-                        <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-gray-200"></div> Expenses</span>
-                    </div>
-                </div>
-                <div class="flex items-end justify-between h-32 gap-2">
-                    <div class="w-full bg-gray-100 rounded-t-sm h-24 relative overflow-hidden">
-                        <div class="absolute bottom-0 w-full bg-blue-500 h-12"></div>
-                    </div>
-                    <div class="w-full bg-gray-100 rounded-t-sm h-28 relative overflow-hidden">
-                        <div class="absolute bottom-0 w-full bg-blue-500 h-16"></div>
-                    </div>
-                    <div class="w-full bg-gray-100 rounded-t-sm h-20 relative overflow-hidden">
-                        <div class="absolute bottom-0 w-full bg-blue-500 h-8"></div>
-                    </div>
-                    <div class="w-full bg-gray-100 rounded-t-sm h-32 relative overflow-hidden">
-                        <div class="absolute bottom-0 w-full bg-blue-500 h-20"></div>
-                    </div>
-                </div>
-                <div class="flex justify-between mt-2 text-[10px] text-gray-400 uppercase">
-                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
-                </div>
-
-                <div class="absolute -top-10 -right-10 bg-white p-4 rounded-2xl shadow-xl w-32 text-center border border-gray-50">
-                    <p class="text-[10px] text-gray-400 font-bold mb-2">Categories</p>
-                    <div class="w-16 h-16 rounded-full border-[6px] border-blue-500 border-t-gray-100 mx-auto flex items-center justify-center">
-                        <span class="text-[10px] font-bold">82%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-12 flex gap-2">
-                <div class="w-8 h-1.5 bg-white rounded-full"></div>
-                <div class="w-2 h-1.5 bg-white/40 rounded-full"></div>
-                <div class="w-2 h-1.5 bg-white/40 rounded-full"></div>
-            </div>
+             
+ 
         </div>
     </div>
 
