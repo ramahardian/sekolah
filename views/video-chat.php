@@ -315,7 +315,7 @@ try {
         }
         
         .chat-section {
-            flex: 0 0 50%;
+            flex: 1;
             display: flex;
             flex-direction: column;
             min-width: 0;
@@ -402,7 +402,7 @@ try {
             #localVideoContainer {
                 width: 80px;
                 height: 60px;
-                bottom: 60px;
+                bottom: 70px;
                 left: 8px;
             }
         }
@@ -410,10 +410,10 @@ try {
         /* Responsive adjustments */
         @media (max-width: 1024px) {
             .video-section {
-                flex: 0 0 60%;
+                flex: 0 0 50%;
             }
             .chat-section {
-                flex: 0 0 40%;
+                flex: 1;
             }
         }
         
@@ -423,12 +423,12 @@ try {
             }
             
             .video-section {
-                flex: 1;
+                flex: 0 0 60%;
                 width: 100%;
             }
             
             .chat-section {
-                flex: 0 0 40%;
+                flex: 1;
                 width: 100%;
                 border-left: none;
                 border-top: 1px solid #e1e5e9;
@@ -477,6 +477,11 @@ try {
             
             .video-section {
                 padding: 8px;
+                flex: 0 0 50%;
+            }
+            
+            .chat-section {
+                flex: 1;
             }
             
             #localVideoContainer {
