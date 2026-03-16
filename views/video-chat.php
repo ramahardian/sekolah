@@ -1041,27 +1041,255 @@ const $videoOffCover  = document.getElementById('videoOffCover');
 /* ============================================================
    WEBRTC
 ============================================================ */
+let isInitiator = false;
+let signalingInterval = null;
+let lastSignalId = 0;
+
 async function initWebRTC() {
     try {
+        // Get user media
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         $localVideo.srcObject = localStream;
+        
+        // Build peer connection
         buildPeerConnection();
+        
+        // Start signaling
+        startSignaling();
+        
+        // Check if we're the first participant (become initiator)
+        checkIfInitiator();
+        
     } catch (err) {
         console.warn('Camera/mic error:', err);
-        showToast('Tidak dapat mengakses kamera/mikrofon.', 'error');
+        showToast('Tidak dapat mengakses kamera/mikrofon. Pastikan browser memiliki izin.', 'error');
+        
+        // Still try to join as audio-only if video fails
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            $localVideo.srcObject = localStream;
+            buildPeerConnection();
+            startSignaling();
+            checkIfInitiator();
+            showToast('Hanya audio yang diaktifkan', 'warning');
+        } catch (audioErr) {
+            console.warn('Audio also failed:', audioErr);
+            showToast('Tidak dapat mengakses mikrofon', 'error');
+        }
     }
 }
 
 function buildPeerConnection() {
-    const cfg = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+    const cfg = { 
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+        ] 
+    };
+    
     peerConnection = new RTCPeerConnection(cfg);
+    
+    // Handle incoming tracks
     peerConnection.ontrack = e => {
+        console.log('Received track:', e.streams[0]);
         $remoteVideo.srcObject = e.streams[0];
         $waitingOverlay.style.display = 'none';
+        
+        // Show toast when remote video starts
+        showToast('Peserta lain bergabung!', 'success');
     };
+    
+    // Handle ICE candidates
+    peerConnection.onicecandidate = e => {
+        if (e.candidate) {
+            sendSignal('ice-candidate', e.candidate);
+        }
+    };
+    
+    // Handle connection state changes
+    peerConnection.onconnectionstatechange = e => {
+        console.log('Connection state:', peerConnection.connectionState);
+        if (peerConnection.connectionState === 'connected') {
+            showToast('Terhubung dengan peserta lain', 'success');
+        } else if (peerConnection.connectionState === 'disconnected') {
+            $waitingOverlay.style.display = 'flex';
+            showToast('Peserta lain terputus', 'warning');
+        }
+    };
+    
+    // Add local tracks
     if (localStream) {
         localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
     }
+}
+
+async function checkIfInitiator() {
+    try {
+        // Simple check: if we're the only participant, become initiator
+        const participants = await getParticipants();
+        if (participants.length <= 1) {
+            isInitiator = true;
+            console.log('We are the initiator');
+            // Create offer after a short delay
+            setTimeout(createOffer, 1000);
+        }
+    } catch (err) {
+        console.warn('Error checking initiator:', err);
+    }
+}
+
+async function createOffer() {
+    if (!isInitiator || !peerConnection) return;
+    
+    try {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        sendSignal('offer', offer);
+        console.log('Offer sent');
+    } catch (err) {
+        console.warn('Error creating offer:', err);
+    }
+}
+
+async function handleOffer(offer) {
+    if (isInitiator) return; // Don't handle offers if we're initiator
+    
+    try {
+        await peerConnection.setRemoteDescription(offer);
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        sendSignal('answer', answer);
+        console.log('Answer sent');
+    } catch (err) {
+        console.warn('Error handling offer:', err);
+    }
+}
+
+async function handleAnswer(answer) {
+    if (!isInitiator) return; // Only initiator handles answers
+    
+    try {
+        await peerConnection.setRemoteDescription(answer);
+        console.log('Answer received');
+    } catch (err) {
+        console.warn('Error handling answer:', err);
+    }
+}
+
+async function handleIceCandidate(candidate) {
+    try {
+        await peerConnection.addIceCandidate(candidate);
+        console.log('ICE candidate added');
+    } catch (err) {
+        console.warn('Error adding ICE candidate:', err);
+    }
+}
+
+function sendSignal(type, data) {
+    // For now, use localStorage as a simple signaling mechanism
+    // In production, this should use WebSocket or server-side signaling
+    const signal = {
+        type: type,
+        data: data,
+        userId: USER_ID,
+        roomId: ROOM_ID,
+        timestamp: Date.now()
+    };
+    
+    // Store in localStorage for other tabs in same room
+    const key = `webrtc_signal_${ROOM_ID}`;
+    const existing = localStorage.getItem(key);
+    const signals = existing ? JSON.parse(existing) : [];
+    signals.push(signal);
+    
+    // Keep only last 50 signals
+    if (signals.length > 50) {
+        signals.splice(0, signals.length - 50);
+    }
+    
+    localStorage.setItem(key, JSON.stringify(signals));
+    
+    // Also try server-side signaling if available
+    try {
+        fetch(`${API_BASE}/api/webrtc_signal.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                room_id: ROOM_ID,
+                type: type,
+                data: JSON.stringify(data)
+            })
+        }).catch(e => console.log('Server signaling not available:', e));
+    } catch (e) {
+        console.log('Server signaling failed:', e);
+    }
+}
+
+function startSignaling() {
+    // Poll for signals every 2 seconds
+    signalingInterval = setInterval(() => {
+        pollSignals();
+    }, 2000);
+}
+
+function pollSignals() {
+    try {
+        // Check localStorage for signals
+        const key = `webrtc_signal_${ROOM_ID}`;
+        const existing = localStorage.getItem(key);
+        
+        if (existing) {
+            const signals = JSON.parse(existing);
+            const newSignals = signals.filter(s => s.userId !== USER_ID && s.timestamp > lastSignalId);
+            
+            newSignals.forEach(signal => {
+                if (signal.type === 'offer') {
+                    handleOffer(signal.data);
+                } else if (signal.type === 'answer') {
+                    handleAnswer(signal.data);
+                } else if (signal.type === 'ice-candidate') {
+                    handleIceCandidate(signal.data);
+                }
+                lastSignalId = Math.max(lastSignalId, signal.timestamp);
+            });
+        }
+        
+        // Also try server-side polling
+        fetch(`${API_BASE}/api/webrtc_signal.php?room_id=${ROOM_ID}&last_id=0`)
+            .then(res => res.json())
+            .then(signals => {
+                if (Array.isArray(signals)) {
+                    signals.forEach(signal => {
+                        if (signal.user_id != USER_ID) {
+                            const data = JSON.parse(signal.signal_data);
+                            if (signal.signal_type === 'offer') {
+                                handleOffer(data);
+                            } else if (signal.signal_type === 'answer') {
+                                handleAnswer(data);
+                            } else if (signal.signal_type === 'ice-candidate') {
+                                handleIceCandidate(data);
+                            }
+                        }
+                    });
+                }
+            })
+            .catch(e => console.log('Server polling failed:', e));
+            
+    } catch (err) {
+        console.warn('Error polling signals:', err);
+    }
+}
+
+async function getParticipants() {
+    try {
+        const response = await fetch(`${API_BASE}/api/get_participants.php?room_id=${ROOM_ID}`);
+        if (response.ok) {
+            return await response.json();
+        }
+    } catch (err) {
+        console.warn('Error getting participants:', err);
+    }
+    return [];
 }
 
 /* ============================================================
@@ -1110,8 +1338,22 @@ async function shareScreen() {
 
 function endCall() {
     if (!confirm('Yakin ingin meninggalkan meeting?')) return;
+    
+    // Stop signaling
+    if (signalingInterval) {
+        clearInterval(signalingInterval);
+        signalingInterval = null;
+    }
+    
+    // Clean up localStorage signals
+    const key = `webrtc_signal_${ROOM_ID}`;
+    localStorage.removeItem(key);
+    
+    // Stop media streams
     localStream?.getTracks().forEach(t => t.stop());
     peerConnection?.close();
+    
+    // Redirect
     window.location.href = 'index.php?page=dashboard';
 }
 
@@ -1377,6 +1619,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('beforeunload', () => {
+    // Stop signaling
+    if (signalingInterval) {
+        clearInterval(signalingInterval);
+    }
+    
+    // Clean up localStorage signals
+    const key = `webrtc_signal_${ROOM_ID}`;
+    localStorage.removeItem(key);
+    
+    // Stop media streams
     localStream?.getTracks().forEach(t => t.stop());
     peerConnection?.close();
 });
