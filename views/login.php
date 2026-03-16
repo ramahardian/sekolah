@@ -86,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="mb-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-800">Sign In</h2>
-                <p class="text-gray-400 mt-2">Welcome back! Please enter your details</p>
+                <h2 class="text-3xl font-bold text-gray-800">Masuk</h2>
+                <p class="text-gray-400 mt-2">Selamat datang kembali! Silakan masukkan detail Anda</p>
             </div>
 
             <?php if (!empty($error)): ?>
@@ -100,14 +100,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, 'UTF-8') ?>">
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1"> Username</label>
+                    <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Nama Pengguna</label>
                     <input type="text" name="username" required 
                         class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-300"
-                        placeholder="Enter your email">
+                        placeholder="Masukkan nama pengguna">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Password</label>
+                    <label class="block text-sm font-medium text-gray-500 mb-1.5 ml-1">Kata Sandi</label>
                     <div class="relative">
                         <input type="password" name="password" required id="passwordInput"
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-300"
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]">
-                    Sign in
+                    Masuk
                 </button>
             </form>
 
@@ -133,9 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
             
             <div class="z-10 text-center max-w-sm mb-12">
-                <h1 class="text-4xl font-bold mb-6 leading-tight">Welcome back! Please sign in to your Filuick pay account</h1>
+                <h1 class="text-4xl font-bold mb-6 leading-tight">Selamat datang kembali! Silakan masuk ke akun Sistem Informasi Sekolah Anda</h1>
                 <p class="text-blue-100 opacity-80 leading-relaxed">
-                    Manage your school finances and data with our most advanced dashboard yet. Fast, secure, and transparent.
+                    Kelola keuangan dan data sekolah dengan dashboard tercanggih kami. Cepat, aman, dan transparan.
                 </p>
             </div>
 
