@@ -861,9 +861,9 @@ body {
                 </h3>
                 <div class="flex items-center gap-1">
                     <?php if ($userRole === 'teacher' || $userRole === 'admin' || $userRole === 'guru'): ?>
-                        <button class="hbtn" onclick="clearChat()" title="Hapus Semua Chat" style="padding:4px 8px;font-size:11px;color:#ef4444;">
+                        <button class="hbtn" onclick="clearChat()" title="Bersihkan Semua Pesan" style="padding:4px 8px;font-size:11px;color:#ef4444;">
                             <i class="fas fa-trash-alt"></i>
-                            <span class="hidden xs:inline ml-1">Hapus</span>
+                            <span class="hidden xs:inline ml-1">Bersihkan Chat</span>
                         </button>
                     <?php endif; ?>
                     <button class="panel-close-btn" onclick="toggleChat()">
@@ -1174,7 +1174,7 @@ function getLastMsgId() {
 }
 
 async function clearChat() {
-    if (!confirm('Hapus semua pesan di room ini? Tindakan ini tidak dapat dibatalkan.')) return;
+    if (!confirm('Bersihkan semua pesan di room ini? Peserta lain juga tidak akan melihat pesan lama.')) return;
     
     try {
         const res = await fetch(`${API_BASE}/api/clear_chat.php`, {
