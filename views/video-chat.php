@@ -185,6 +185,7 @@ try {
             margin: 0;
             padding: 0;
             overflow: hidden;
+            background: #f0f2f5;
         }
         .heading-oswald { font-family: 'Oswald', sans-serif; }
         
@@ -194,28 +195,31 @@ try {
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
         
-        /* Video container */
+        /* Zoom-style video container */
         .video-container { 
             position: relative; 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
-            border-radius: 16px; 
+            background: #262626; 
+            border-radius: 8px; 
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e1e5e9;
         }
         .video-element { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Chat bubble */
+        /* Zoom-style chat bubble */
         .chat-bubble { max-width: 70%; word-wrap: break-word; }
         .chat-bubble.sent { 
             margin-left: auto; 
-            background: linear-gradient(135deg, #002147 0%, #001a35 100%);
+            background: #007bff;
             color: white;
+            border-radius: 18px;
         }
         .chat-bubble.received { 
             margin-right: auto; 
             background: white;
-            color: #1f2937;
-            border: 1px solid #e5e7eb;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            border-radius: 18px;
         }
         
         /* Animations */
@@ -228,29 +232,40 @@ try {
             animation: pulse 2s infinite;
         }
         
-        /* Glass morphism effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Button hover effects */
-        .btn-hover {
-            transition: all 0.3s ease;
+        /* Zoom-style button effects */
+        .btn-zoom {
+            transition: all 0.2s ease;
             transform: translateY(0);
+            background: #2d2d2d;
+            border: 2px solid transparent;
         }
         
-        .btn-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        .btn-zoom:hover {
+            background: #3d3d3d;
+            border-color: #007bff;
+            transform: scale(1.05);
+        }
+        
+        .btn-zoom.active {
+            background: #007bff;
+            border-color: #0056b3;
+        }
+        
+        .btn-zoom.danger {
+            background: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .btn-zoom.danger:hover {
+            background: #c82333;
+            border-color: #c82333;
         }
         
         /* Status indicator */
         .status-online {
             width: 12px;
             height: 12px;
-            background: #10b981;
+            background: #28a745;
             border-radius: 50%;
             border: 2px solid white;
             position: absolute;
@@ -259,7 +274,7 @@ try {
         }
         
         .status-offline {
-            background: #6b7280;
+            background: #6c757d;
         }
         
         /* Message animations */
@@ -278,11 +293,12 @@ try {
             animation: slideInUp 0.3s ease-out;
         }
         
-        /* Layout fixes */
+        /* Zoom-style layout fixes */
         .main-container {
             height: 100vh;
             display: flex;
             flex-direction: column;
+            background: #f0f2f5;
         }
         
         .content-area {
@@ -295,22 +311,77 @@ try {
             flex: 0 0 50%;
             display: flex;
             flex-direction: column;
+            background: #f0f2f5;
         }
         
         .chat-section {
             flex: 0 0 50%;
             display: flex;
             flex-direction: column;
-            min-width: 0; /* Prevent flex item from overflowing */
+            min-width: 0;
+            background: white;
+            border-left: 1px solid #e1e5e9;
         }
         
         .sidebar-panel {
             flex: 0 0 320px;
             transition: transform 0.3s ease;
+            background: white;
+            border-left: 1px solid #e1e5e9;
         }
         
         .sidebar-panel.hidden {
             transform: translateX(100%);
+        }
+        
+        /* Zoom-style header */
+        .zoom-header {
+            background: #2d2d2d;
+            color: white;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        
+        /* Zoom-style video controls */
+        .zoom-controls {
+            background: #2d2d2d;
+            border-top: 1px solid #3d3d3d;
+            padding: 12px;
+        }
+        
+        /* Zoom-style chat header */
+        .chat-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e1e5e9;
+            padding: 16px;
+        }
+        
+        /* Zoom-style participant avatar */
+        .participant-avatar {
+            width: 36px;
+            height: 36px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        /* Zoom-style input */
+        .zoom-input {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .zoom-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
         
         /* Responsive adjustments */
@@ -334,34 +405,34 @@ try {
 <body class="bg-gradient-to-br from-gray-50 to-gray-100">
     <div class="main-container">
         <!-- Header -->
-        <header class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white shadow-2xl flex-shrink-0">
-            <div class="px-6 py-4">
+        <header class="zoom-header flex-shrink-0">
+            <div class="px-4 py-3">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <a href="index.php?page=video-classes" class="text-white hover:text-[#ffae01] transition-all duration-300 transform hover:scale-110">
-                            <i class="fas fa-arrow-left text-xl"></i>
+                    <div class="flex items-center gap-3">
+                        <a href="index.php?page=video-classes" class="text-white hover:text-blue-400 transition-colors p-2">
+                            <i class="fas fa-arrow-left text-lg"></i>
                         </a>
                         <div>
-                            <h1 class="text-2xl font-bold heading-oswald flex items-center gap-2">
-                                <i class="fas fa-video text-[#ffae01]"></i>
-                                Kelas <?= htmlspecialchars($class['class_name']) ?>
+                            <h1 class="text-lg font-semibold flex items-center gap-2">
+                                <i class="fas fa-video text-blue-400"></i>
+                                <?= htmlspecialchars($class['class_name']) ?>
                             </h1>
-                            <p class="text-sm text-gray-300 flex items-center gap-2">
+                            <p class="text-xs text-gray-400 flex items-center gap-2">
                                 <i class="fas fa-circle text-green-400 text-xs pulse-animation"></i>
-                                Video Chat & Grup Diskusi
+                                Meeting
                             </p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full">
-                            <i class="fas fa-users text-[#ffae01]"></i>
-                            <span class="text-sm font-medium"><?= count($participants) ?> Online</span>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-users text-green-400"></i>
+                            <span><?= count($participants) ?></span>
                         </div>
-                        <button onclick="toggleParticipants()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-300 btn-hover">
-                            <i class="fas fa-user-friends text-lg"></i>
+                        <button onclick="toggleParticipants()" class="text-white hover:text-blue-400 transition-colors p-2">
+                            <i class="fas fa-user-friends"></i>
                         </button>
-                        <button onclick="toggleSettings()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all duration-300 btn-hover">
-                            <i class="fas fa-cog text-lg"></i>
+                        <button onclick="toggleSettings()" class="text-white hover:text-blue-400 transition-colors p-2">
+                            <i class="fas fa-cog"></i>
                         </button>
                     </div>
                 </div>
@@ -378,14 +449,17 @@ try {
                         <video id="remoteVideo" class="video-element" autoplay playsinline></video>
                         <div id="noRemoteVideo" class="absolute inset-0 flex items-center justify-center text-white">
                             <div class="text-center">
-                                <div class="mb-6">
-                                    <i class="fas fa-video-slash text-7xl text-gray-400 pulse-animation"></i>
+                                <div class="mb-4">
+                                    <i class="fas fa-video-slash text-5xl text-gray-400"></i>
                                 </div>
-                                <h3 class="text-xl font-semibold mb-2">Menunggu Peserta</h3>
-                                <p class="text-gray-400">Bagikan link room atau tunggu peserta lain bergabung</p>
-                                <div class="mt-4">
-                                    <button onclick="copyRoomLink()" class="bg-[#002147] hover:bg-[#001a35] text-white px-4 py-2 rounded-lg transition-all duration-300 btn-hover">
-                                        <i class="fas fa-link mr-2"></i>Salin Link Room
+                                <h3 class="text-lg font-medium mb-2">Waiting for others to join</h3>
+                                <p class="text-gray-400 text-sm mb-4">Share this meeting link with others</p>
+                                <div class="bg-gray-700 rounded-lg p-3 inline-block">
+                                    <code class="text-xs text-green-400"><?= $room['room_code'] ?></code>
+                                </div>
+                                <div class="mt-3">
+                                    <button onclick="copyRoomLink()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-link mr-2"></i>Copy Link
                                     </button>
                                 </div>
                             </div>
@@ -393,34 +467,34 @@ try {
                     </div>
                     
                     <!-- Local Video (Picture-in-Picture) -->
-                    <div id="localVideoContainer" class="absolute bottom-6 right-6 w-48 h-36 video-container shadow-2xl glass">
+                    <div id="localVideoContainer" class="absolute bottom-4 right-4 w-40 h-30 video-container shadow-lg">
                         <video id="localVideo" class="video-element" autoplay muted playsinline></video>
-                        <div class="absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-xs text-white">
-                            Anda
+                        <div class="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
+                            You
                         </div>
                     </div>
                 </div>
                 
                 <!-- Video Controls -->
-                <div class="bg-gradient-to-r from-gray-900 to-black p-6 border-t border-gray-800 flex-shrink-0">
-                    <div class="flex justify-center items-center gap-3">
-                        <button id="muteBtn" onclick="toggleMute()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                            <i class="fas fa-microphone text-xl group-hover:text-[#ffae01]"></i>
+                <div class="zoom-controls flex-shrink-0">
+                    <div class="flex justify-center items-center gap-2">
+                        <button id="muteBtn" onclick="toggleMute()" class="btn-zoom text-white p-3 rounded-full transition-all">
+                            <i class="fas fa-microphone text-lg"></i>
                         </button>
-                        <button id="videoBtn" onclick="toggleVideo()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                            <i class="fas fa-video text-xl group-hover:text-[#ffae01]"></i>
+                        <button id="videoBtn" onclick="toggleVideo()" class="btn-zoom text-white p-3 rounded-full transition-all">
+                            <i class="fas fa-video text-lg"></i>
                         </button>
-                        <button onclick="shareScreen()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                            <i class="fas fa-desktop text-xl group-hover:text-[#ffae01]"></i>
+                        <button onclick="shareScreen()" class="btn-zoom text-white p-3 rounded-full transition-all">
+                            <i class="fas fa-desktop text-lg"></i>
                         </button>
-                        <button onclick="toggleChat()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                            <i class="fas fa-comment text-xl group-hover:text-[#ffae01]"></i>
+                        <button onclick="toggleChat()" class="btn-zoom text-white p-3 rounded-full transition-all">
+                            <i class="fas fa-comment text-lg"></i>
                         </button>
-                        <button onclick="toggleRecord()" class="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                            <i class="fas fa-record-vinyl text-xl group-hover:text-red-500"></i>
+                        <button onclick="toggleRecord()" class="btn-zoom text-white p-3 rounded-full transition-all">
+                            <i class="fas fa-record-vinyl text-lg text-red-400"></i>
                         </button>
-                        <button onclick="endCall()" class="bg-red-600 hover:bg-red-700 text-white p-4 rounded-full transition-all duration-300 btn-hover group">
-                            <i class="fas fa-phone-slash text-xl"></i>
+                        <button onclick="endCall()" class="btn-zoom danger text-white p-3 rounded-full transition-all">
+                            <i class="fas fa-phone-slash text-lg"></i>
                         </button>
                     </div>
                 </div>
@@ -429,34 +503,34 @@ try {
             <!-- Chat Section -->
             <section class="chat-section">
                 <!-- Chat Header -->
-                <div class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white p-4 border-b flex-shrink-0">
+                <div class="chat-header flex-shrink-0">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-comments text-[#ffae01] text-xl"></i>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-comments text-blue-500"></i>
                             <div>
-                                <h3 class="font-bold heading-oswald">Grup Diskusi</h3>
-                                <p class="text-xs text-gray-300">Kelas <?= htmlspecialchars($class['class_name']) ?></p>
+                                <h3 class="font-semibold text-sm">Chat</h3>
+                                <p class="text-xs text-gray-500"><?= htmlspecialchars($class['class_name']) ?></p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs bg-green-500 px-2 py-1 rounded-full">
-                                <i class="fas fa-circle text-xs mr-1"></i><?= count($participants) ?> Online
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                                <i class="fas fa-circle text-xs mr-1"></i><?= count($participants) ?>
                             </span>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Chat Messages -->
-                <div id="chatMessages" class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-gray-50">
+                <div id="chatMessages" class="flex-1 overflow-y-auto p-3 custom-scrollbar">
                     <?php if (empty($messages)): ?>
                         <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-comment-dots text-4xl mb-3"></i>
-                            <p>Belum ada pesan. Mulai percakapan!</p>
+                            <i class="fas fa-comment-dots text-3xl mb-2"></i>
+                            <p class="text-sm">No messages yet. Start a conversation!</p>
                         </div>
                     <?php else: ?>
                         <?php foreach ($messages as $message): ?>
-                            <div class="mb-4 <?= $message['user_id'] == $userId ? 'text-right' : 'text-left' ?> message-animate">
-                                <div class="chat-bubble <?= $message['user_id'] == $userId ? 'sent' : 'received' ?> p-3 rounded-2xl shadow-md">
+                            <div class="mb-3 <?= $message['user_id'] == $userId ? 'text-right' : 'text-left' ?> message-animate">
+                                <div class="chat-bubble <?= $message['user_id'] == $userId ? 'sent' : 'received' ?> p-2 shadow-sm">
                                     <?php if ($message['user_id'] != $userId): ?>
                                         <div class="text-xs text-gray-500 mb-1 font-medium">
                                             <?= htmlspecialchars($message['full_name'] ?? $message['username']) ?>
@@ -465,10 +539,10 @@ try {
                                     <div class="text-sm <?= $message['user_id'] == $userId ? 'text-white' : 'text-gray-800' ?>">
                                         <?= htmlspecialchars($message['message']) ?>
                                     </div>
-                                    <div class="text-xs <?= $message['user_id'] == $userId ? 'text-gray-200' : 'text-gray-400' ?> mt-1">
+                                    <div class="text-xs <?= $message['user_id'] == $userId ? 'text-blue-100' : 'text-gray-400' ?> mt-1">
                                         <?= date('H:i', strtotime($message['created_at'])) ?>
                                         <?php if ($message['user_id'] == $userId): ?>
-                                            <i class="fas fa-check-double text-xs ml-1"></i>
+                                            <i class="fas fa-check text-xs ml-1"></i>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -478,31 +552,31 @@ try {
                 </div>
                 
                 <!-- Chat Input -->
-                <div class="border-t bg-white p-4 flex-shrink-0">
+                <div class="border-t border-gray-200 p-3 flex-shrink-0 bg-white">
                     <form id="chatForm" class="flex gap-2">
                         <div class="flex-1 relative">
-                            <input type="text" id="messageInput" placeholder="Ketik pesan..." 
-                                   class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:ring-2 focus:ring-[#002147] focus:border-transparent outline-none transition-all duration-300">
-                            <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#002147] transition-colors">
-                                <i class="fas fa-smile"></i>
+                            <input type="text" id="messageInput" placeholder="Type a message..." 
+                                   class="zoom-input w-full pr-10">
+                            <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors">
+                                <i class="fas fa-smile text-sm"></i>
                             </button>
                         </div>
-                        <button type="submit" class="bg-[#002147] hover:bg-[#001a35] text-white p-3 rounded-full transition-all duration-300 btn-hover">
-                            <i class="fas fa-paper-plane"></i>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg transition-colors">
+                            <i class="fas fa-paper-plane text-sm"></i>
                         </button>
                     </form>
                 </div>
             </section>
 
             <!-- Participants Sidebar -->
-            <aside id="participantsSidebar" class="sidebar-panel bg-white border-l shadow-xl hidden">
-                <div class="bg-gradient-to-r from-[#002147] to-[#001a35] text-white p-4 border-b">
+            <aside id="participantsSidebar" class="sidebar-panel hidden">
+                <div class="chat-header border-b">
                     <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-lg heading-oswald flex items-center gap-2">
-                            <i class="fas fa-users text-[#ffae01]"></i>
-                            Peserta (<?= count($participants) ?>)
+                        <h3 class="font-semibold text-sm flex items-center gap-2">
+                            <i class="fas fa-users text-blue-500"></i>
+                            Participants (<?= count($participants) ?>)
                         </h3>
-                        <button onclick="toggleParticipants()" class="text-white hover:text-[#ffae01] transition-colors">
+                        <button onclick="toggleParticipants()" class="text-gray-500 hover:text-gray-700 transition-colors">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -510,41 +584,41 @@ try {
                 <div class="overflow-y-auto custom-scrollbar">
                     <?php if (empty($participants)): ?>
                         <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-user-slash text-4xl mb-3"></i>
-                            <p>Belum ada peserta online</p>
+                            <i class="fas fa-user-slash text-3xl mb-2"></i>
+                            <p class="text-sm">No participants yet</p>
                         </div>
                     <?php else: ?>
                         <?php foreach ($participants as $participant): ?>
-                            <div class="flex items-center gap-3 p-4 hover:bg-gray-50 border-b transition-colors">
+                            <div class="flex items-center gap-3 p-3 hover:bg-gray-50 border-b transition-colors">
                                 <div class="relative">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-[#002147] to-[#001a35] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                    <div class="participant-avatar">
                                         <?= strtoupper(substr($participant['full_name'] ?? $participant['username'], 0, 1)) ?>
                                     </div>
                                     <div class="status-online"></div>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="font-semibold text-gray-800">
+                                    <div class="font-medium text-sm text-gray-800">
                                         <?= htmlspecialchars($participant['full_name'] ?? $participant['username']) ?>
                                     </div>
-                                    <div class="text-sm text-gray-500 flex items-center gap-2">
+                                    <div class="text-xs text-gray-500 flex items-center gap-1">
                                         <?php if ($participant['user_role'] === 'teacher'): ?>
                                             <i class="fas fa-chalkboard-teacher text-xs"></i>
-                                            <span>Guru</span>
+                                            <span>Host</span>
                                         <?php else: ?>
-                                            <i class="fas fa-graduation-cap text-xs"></i>
-                                            <span>Siswa</span>
+                                            <i class="fas fa-user text-xs"></i>
+                                            <span>Participant</span>
                                         <?php endif; ?>
                                         <?php if ($participant['user_id'] == $userId): ?>
-                                            <span class="text-xs bg-[#002147] text-white px-2 py-1 rounded-full">Anda</span>
+                                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">You</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-1">
-                                    <button class="text-gray-400 hover:text-[#002147] transition-colors">
-                                        <i class="fas fa-microphone"></i>
+                                <div class="flex gap-1">
+                                    <button class="text-gray-400 hover:text-blue-500 transition-colors p-1">
+                                        <i class="fas fa-microphone text-sm"></i>
                                     </button>
-                                    <button class="text-gray-400 hover:text-[#002147] transition-colors">
-                                        <i class="fas fa-video"></i>
+                                    <button class="text-gray-400 hover:text-blue-500 transition-colors p-1">
+                                        <i class="fas fa-video text-sm"></i>
                                     </button>
                                 </div>
                             </div>
